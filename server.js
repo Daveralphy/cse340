@@ -15,6 +15,11 @@ const static = require("./routes/static")
  *************************/
 app.use(static)
 
+// Index route
+app.get("/", function (req, res) {
+  res.status(200).send("Welcome to CSE 340")
+})
+
 /* ***********************
  * Local Server Information
  * Values from .env (environment) file

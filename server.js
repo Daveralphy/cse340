@@ -10,6 +10,8 @@ const expressLayouts = require("express-ejs-layouts")
 const env = require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
+const invRoute = require("./routes/inventoryRoute")
+const utilities = require("./utilities")
 
 /* ***********************
  * View Engine and Templates
@@ -22,10 +24,48 @@ app.set("layout", "./layouts/layout")
  * Routes
  *************************/
 app.use(static)
+app.use("/inv", invRoute)
 
 // Index route
-app.get("/", function (req, res) {
-  res.render("index", { title: "Home" })
+app.get("/", async function (req, res, next) {
+  try {
+    res.render("index", {
+      title: "Home",
+      nav: await utilities.getNav(),
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.get("/vehicles/detail/:inv_id", (req, res) => {
+  res.redirect(`/inv/detail/${req.params.inv_id}`)
+})
+
+app.use(async (req, res, next) => {
+  try {
+    res.status(404).render("errors/error", {
+      title: "404 - Not Found",
+      nav: await utilities.getNav(),
+      message: "Sorry, the requested page was not found.",
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.use(async (err, req, res, next) => {
+  try {
+    console.error(err)
+    const status = err.status || 500
+    res.status(status).render("errors/error", {
+      title: status === 404 ? "404 - Not Found" : "Server Error",
+      nav: await utilities.getNav(),
+      message: err.message || "Sorry, something went wrong.",
+    })
+  } catch (error) {
+    res.status(500).send("Server Error")
+  }
 })
 
 /* ***********************

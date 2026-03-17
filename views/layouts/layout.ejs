@@ -3,7 +3,11 @@
 <%- include("../partials/head") %>
 <body>
   <%- include("../partials/header") %>
-  <%- include("../partials/navigation") %>
+  <% if (typeof nav !== "undefined") { %>
+    <%- nav %>
+  <% } else { %>
+    <%- include("../partials/navigation") %>
+  <% } %>
   <main>
     <%- body %>
   </main>

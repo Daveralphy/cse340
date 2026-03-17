@@ -291,13 +291,15 @@ footer a {
    ========================================== */
 #inv-display {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 300px));
+  justify-content: center;
   gap: 1rem;
   padding: 0;
   margin: 1rem 0 0 0;
 }
 
 #inv-display li {
+  width: 100%;
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -306,7 +308,7 @@ footer a {
 
 #inv-display img {
   width: 100%;
-  height: 160px;
+  height: 180px;
   object-fit: cover;
   display: block;
 }
@@ -356,6 +358,59 @@ footer a {
 
 .vehicle-info p {
   margin: 0 0 0.75rem;
+}
+
+.breadcrumbs {
+  margin: 0.5rem 0 1rem;
+  color: var(--text-light);
+}
+
+.breadcrumbs a {
+  font-weight: 600;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  color: var(--white);
+  filter: brightness(0.95);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  color: var(--white);
+  filter: brightness(1.1);
+  text-decoration: none;
 }
 
 /* ==========================================
@@ -431,5 +486,14 @@ footer a {
 @media screen and (max-width: 768px) {
   .vehicle-detail {
     flex-direction: column;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    text-align: center;
   }
 }

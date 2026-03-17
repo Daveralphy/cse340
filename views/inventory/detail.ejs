@@ -1,3 +1,9 @@
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span>/</span> <a href="/inv/type/<%= classificationId %>">Inventory</a> <span>/</span> <span><%= title %></span>
+</nav>
+
+<a class="back-link" href="/" onclick="if(window.history.length>1){history.back();return false;}">Back to Previous Page</a>
+
 <h1><%= title %></h1>
 <section>
   <%- detail %>

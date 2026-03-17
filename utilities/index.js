@@ -50,16 +50,22 @@ function buildVehicleDetailHTML(vehicle) {
   }).format(vehicle.inv_price)
 
   const mileage = new Intl.NumberFormat("en-US").format(vehicle.inv_miles)
+  const vehicleName = vehicle.inv_make + " " + vehicle.inv_model
+  const mailSubject = encodeURIComponent("Purchase Inquiry - " + vehicleName)
 
   return `
     <div class="vehicle-detail">
-      <img src="${vehicle.inv_image}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
+      <img src="${vehicle.inv_image}" alt="${vehicleName}">
       <div class="vehicle-info">
-        <h2>${vehicle.inv_make} ${vehicle.inv_model}</h2>
+        <h2>${vehicleName}</h2>
         <p><strong>Price:</strong> ${price}</p>
         <p><strong>Mileage:</strong> ${mileage} miles</p>
         <p><strong>Color:</strong> ${vehicle.inv_color}</p>
         <p>${vehicle.inv_description}</p>
+        <div class="detail-actions">
+          <a class="btn-secondary" href="/inv/type/${vehicle.classification_id}">Back to Vehicle List</a>
+          <a class="btn-primary" href="mailto:sales@csemotors.example?subject=${mailSubject}">Purchase Inquiry</a>
+        </div>
       </div>
     </div>
   `

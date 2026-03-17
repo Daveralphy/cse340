@@ -42,6 +42,7 @@ async function buildVehicleDetail(req, res, next) {
       title: data.inv_make + " " + data.inv_model,
       nav: await utilities.getNav(),
       detail: detailHTML,
+      classificationId: data.classification_id,
     })
   } catch (error) {
     next(error)

@@ -306,6 +306,16 @@ footer a {
   overflow: hidden;
 }
 
+.card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  text-decoration: none;
+}
+
 #inv-display img {
   width: 100%;
   height: 180px;
@@ -392,7 +402,7 @@ footer a {
 }
 
 .btn-primary {
-  background-color: var(--accent-color);
+  background-color: #b3391a;
   color: var(--white);
 }
 

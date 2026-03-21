@@ -27,14 +27,14 @@ function buildClassificationGrid(data) {
     }).format(vehicle.inv_price)
 
     grid += "<li>"
-    grid += '<a href="/inv/detail/' + vehicle.inv_id + '" title="View ' + name + ' details">'
-    grid += '<img src="' + vehicle.inv_thumbnail + '" alt="Image of ' + name + ' on CSE Motors">'
-    grid += "</a>"
+    grid += '<a class="card-link" href="/inv/detail/' + vehicle.inv_id + '" title="View details for ' + name + '">'
+    grid += '<img src="' + vehicle.inv_thumbnail + '" alt="' + name + ' thumbnail">'
     grid += '<div class="namePrice">'
     grid += "<hr>"
-    grid += '<h2><a href="/inv/detail/' + vehicle.inv_id + '" title="View ' + name + ' details">' + name + "</a></h2>"
+    grid += "<h2>" + name + "</h2>"
     grid += "<span>" + price + "</span>"
     grid += "</div>"
+    grid += "</a>"
     grid += "</li>"
   })
 

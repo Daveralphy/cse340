@@ -8,6 +8,8 @@
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
 const env = require("dotenv").config()
+const session = require("express-session")
+const flash = require("connect-flash")
 const app = express()
 const static = require("./routes/static")
 const invRoute = require("./routes/inventoryRoute")
@@ -19,6 +21,27 @@ const utilities = require("./utilities")
 app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
+
+/* ***********************
+ * Middleware
+ *************************/
+app.use(session({
+  secret: process.env.SESSION_SECRET || "your-secret-key",
+  resave: true,
+  saveUninitialized: true,
+  name: "sessionId"
+}))
+app.use(flash())
+
+// Make flash messages available in templates
+app.use((req, res, next) => {
+  res.locals.messages = req.flash()
+  next()
+})
+
+// Body parser middleware
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 /* ***********************
  * Routes

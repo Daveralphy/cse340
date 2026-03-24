@@ -8,6 +8,19 @@
   <% } else { %>
     <%- include("../partials/navigation") %>
   <% } %>
+  
+  <!-- Flash Messages -->
+  <% if (messages.notice) { %>
+    <div class="flash-notice">
+      <%= messages.notice %>
+    </div>
+  <% } %>
+  <% if (messages.error) { %>
+    <div class="flash-error">
+      <%= messages.error %>
+    </div>
+  <% } %>
+  
   <main>
     <%- body %>
   </main>

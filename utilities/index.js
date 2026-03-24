@@ -1,5 +1,10 @@
 const invModel = require("../models/inventory-model")
 
+// Error handling wrapper
+function handleErrors(fn) {
+  return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+}
+
 async function getNav() {
   const data = await invModel.getClassifications()
   let list = '<nav id="main-navigation"><ul>'
@@ -13,6 +18,20 @@ async function getNav() {
 
   list += "</ul></nav>"
   return list
+}
+
+async function getClassificationDropdown(classificationId = null) {
+  const data = await invModel.getClassifications()
+  let dropdown = '<select name="classification_id" id="classification_id" required>'
+  dropdown += '<option value="">-- Select a Classification --</option>'
+  
+  data.forEach((row) => {
+    const selected = classificationId == row.classification_id ? 'selected' : ''
+    dropdown += `<option value="${row.classification_id}" ${selected}>${row.classification_name}</option>`
+  })
+  
+  dropdown += '</select>'
+  return dropdown
 }
 
 function buildClassificationGrid(data) {
@@ -72,7 +91,9 @@ function buildVehicleDetailHTML(vehicle) {
 }
 
 module.exports = {
+  handleErrors,
   getNav,
+  getClassificationDropdown,
   buildClassificationGrid,
   buildVehicleDetailHTML,
 }

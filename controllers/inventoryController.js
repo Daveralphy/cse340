@@ -2,7 +2,7 @@ const invModel = require("../models/inventory-model")
 const utilities = require("../utilities/")
 const { body, validationResult } = require("express-validator")
 
-// Management page - render management view
+// Management page - render management view - MUST use controller (not direct view call)
 async function buildManagement(req, res, next) {
   try {
     res.render("inventory/management", {
@@ -26,47 +26,59 @@ async function buildAddClassification(req, res, next) {
   }
 }
 
-// Add Classification - process form
+// Add Classification - process form with FULL VALIDATION
 async function addClassification(req, res, next) {
   try {
     const { classification_name } = req.body
 
     // Server-side validation
+    const errors = []
+
+    // Check if empty
     if (!classification_name || classification_name.trim() === "") {
-      req.flash("error", "Classification name is required")
+      errors.push("Classification name is required")
+    } else {
+      // Trim whitespace
+      const trimmedName = classification_name.trim()
+
+      // Regex validation: letters and numbers only (no spaces, no special characters)
+      const regex = /^[A-Za-z0-9]+$/
+      if (!regex.test(trimmedName)) {
+        errors.push("Classification name can only contain letters and numbers (no spaces or special characters)")
+      }
+
+      // If validation passed, insert into database
+      if (errors.length === 0) {
+        // Use parameterized query via model - RETURNS result
+        const result = await invModel.addClassification(trimmedName)
+
+        if (result) {
+          // Flash message - passed through session
+          req.flash("notice", `New classification "${result.classification_name}" added successfully`)
+          // Rebuild nav automatically when returning to /inv
+          return res.redirect("/inv")
+        }
+      }
+    }
+
+    // If validation errors, re-render form with sticky data and error messages
+    if (errors.length > 0) {
+      req.flash("error", errors.join(". "))
       return res.status(400).render("inventory/add-classification", {
         title: "Add Classification",
         nav: await utilities.getNav(),
-        classification_name,
+        classification_name, // Sticky form value
       })
-    }
-
-    const regex = /^[A-Za-z0-9]+$/
-    if (!regex.test(classification_name.trim())) {
-      req.flash("error", "Classification name can only contain letters and numbers")
-      return res.status(400).render("inventory/add-classification", {
-        title: "Add Classification",
-        nav: await utilities.getNav(),
-        classification_name,
-      })
-    }
-
-    // Insert into database
-    const result = await invModel.addClassification(classification_name.trim())
-
-    // Rebuild nav after successful insert
-    if (result) {
-      req.flash("notice", `New classification "${result.classification_name}" added successfully`)
-      res.redirect("/inv")
     }
   } catch (error) {
     next(error)
   }
 }
 
-// Add Vehicle - show form
+// Add Vehicle - show form with dynamic dropdown
 async function buildAddVehicle(req, res, next) {
   try {
+    // Dynamic dropdown built from DB - NO HARDCODING
     const dropdown = await utilities.getClassificationDropdown()
     res.render("inventory/add-vehicle", {
       title: "Add Vehicle",
@@ -78,53 +90,126 @@ async function buildAddVehicle(req, res, next) {
   }
 }
 
-// Add Vehicle - process form
+// Add Vehicle - process form with FULL VALIDATION
 async function addVehicle(req, res, next) {
   try {
     const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id } = req.body
 
-    // Validation object for sticky form
+    // Validation object for sticky form - holds all input values
     const validationData = {
-      inv_make,
-      inv_model,
-      inv_year,
-      inv_description,
-      inv_image,
-      inv_thumbnail,
-      inv_price,
-      inv_miles,
-      inv_color,
-      classification_id,
+      inv_make: inv_make || "",
+      inv_model: inv_model || "",
+      inv_year: inv_year || "",
+      inv_description: inv_description || "",
+      inv_image: inv_image || "",
+      inv_thumbnail: inv_thumbnail || "",
+      inv_price: inv_price || "",
+      inv_miles: inv_miles || "",
+      inv_color: inv_color || "",
+      classification_id: classification_id || "",
     }
 
-    // Server-side validation
+    // Server-side validation for ALL 10 fields
     const errors = []
 
-    if (!inv_make || inv_make.trim() === "") errors.push("Make is required")
-    if (!inv_model || inv_model.trim() === "") errors.push("Model is required")
-    if (!inv_year || isNaN(inv_year)) errors.push("Valid year is required")
-    if (!inv_description || inv_description.trim() === "") errors.push("Description is required")
-    if (!inv_image || inv_image.trim() === "") errors.push("Image path is required")
-    if (!inv_thumbnail || inv_thumbnail.trim() === "") errors.push("Thumbnail path is required")
-    if (!inv_price || isNaN(inv_price)) errors.push("Valid price is required")
-    if (!inv_miles || isNaN(inv_miles)) errors.push("Valid mileage is required")
-    if (!inv_color || inv_color.trim() === "") errors.push("Color is required")
-    if (!classification_id) errors.push("Classification is required")
+    // inv_make - string, required
+    if (!inv_make || inv_make.trim() === "") {
+      errors.push("Make is required")
+    }
 
+    // inv_model - string, required
+    if (!inv_model || inv_model.trim() === "") {
+      errors.push("Model is required")
+    }
+
+    // inv_year - number, required, valid year
+    if (!inv_year) {
+      errors.push("Year is required")
+    } else if (isNaN(inv_year) || inv_year === "") {
+      errors.push("Year must be a valid number")
+    } else {
+      const yearNum = parseInt(inv_year, 10)
+      if (yearNum < 1900 || yearNum > 2100) {
+        errors.push("Year must be between 1900 and 2100")
+      }
+    }
+
+    // inv_description - string, required
+    if (!inv_description || inv_description.trim() === "") {
+      errors.push("Description is required")
+    }
+
+    // inv_image - string, required
+    if (!inv_image || inv_image.trim() === "") {
+      errors.push("Image path is required")
+    }
+
+    // inv_thumbnail - string, required
+    if (!inv_thumbnail || inv_thumbnail.trim() === "") {
+      errors.push("Thumbnail path is required")
+    }
+
+    // inv_price - number, required, non-negative
+    if (!inv_price) {
+      errors.push("Price is required")
+    } else if (isNaN(inv_price) || inv_price === "") {
+      errors.push("Price must be a valid number")
+    } else {
+      const priceNum = parseFloat(inv_price)
+      if (priceNum < 0) {
+        errors.push("Price cannot be negative")
+      }
+    }
+
+    // inv_miles - number, required, non-negative
+    if (!inv_miles) {
+      errors.push("Mileage is required")
+    } else if (isNaN(inv_miles) || inv_miles === "") {
+      errors.push("Mileage must be a valid number")
+    } else {
+      const milesNum = parseInt(inv_miles, 10)
+      if (milesNum < 0) {
+        errors.push("Mileage cannot be negative")
+      }
+    }
+
+    // inv_color - string, required
+    if (!inv_color || inv_color.trim() === "") {
+      errors.push("Color is required")
+    }
+
+    // classification_id - required
+    if (!classification_id) {
+      errors.push("Classification is required")
+    }
+
+    // If validation errors, re-render form with ALL sticky values and error messages
     if (errors.length > 0) {
       const dropdown = await utilities.getClassificationDropdown(classification_id)
-      req.flash("error", errors.join(", "))
+      req.flash("error", errors.join(". "))
       return res.status(400).render("inventory/add-vehicle", {
         title: "Add Vehicle",
         nav: await utilities.getNav(),
         dropdown,
-        ...validationData,
+        ...validationData, // Spread all sticky form values
       })
     }
 
-    // Insert into database
-    const result = await invModel.addVehicle(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id)
+    // All validation passed - insert into database using parameterized query
+    const result = await invModel.addVehicle(
+      inv_make.trim(),
+      inv_model.trim(),
+      inv_year,
+      inv_description.trim(),
+      inv_image.trim(),
+      inv_thumbnail.trim(),
+      inv_price,
+      inv_miles,
+      inv_color.trim(),
+      classification_id
+    )
 
+    // Model returns result from RETURNING *
     if (result) {
       req.flash("notice", `${result.inv_make} ${result.inv_model} added successfully`)
       res.redirect("/inv")

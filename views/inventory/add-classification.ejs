@@ -12,83 +12,14 @@
         required
         pattern="^[A-Za-z0-9]+$"
         title="Letters and numbers only, no spaces or special characters"
-        placeholder="e.g. SUV, Sedan, Truck"
+        placeholder="e.g., Sedan, SUV, Truck"
       />
+      <small style="color: var(--text-light); margin-top: 0.25rem;">Letters and numbers only (no spaces or special characters)</small>
     </div>
 
-    <button type="submit" class="btn-submit">Add Classification</button>
-    <a href="/inv" class="btn-cancel">Cancel</a>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <button type="submit" class="btn-submit">Add Classification</button>
+      <a href="/inv" class="btn-cancel">Cancel</a>
+    </div>
   </form>
 </div>
-
-<style>
-  .form-container {
-    padding: 2rem;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .form-container h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-field label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-
-  .form-field input {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-
-  .form-field input:focus {
-    outline: none;
-    border-color: #333;
-    box-shadow: 0 0 5px rgba(51, 51, 51, 0.1);
-  }
-
-  .btn-submit {
-    padding: 0.75rem 1.5rem;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .btn-submit:hover {
-    background-color: #555;
-  }
-
-  .btn-cancel {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: #999;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    text-align: center;
-    transition: background-color 0.3s;
-  }
-
-  .btn-cancel:hover {
-    background-color: #777;
-  }
-</style>

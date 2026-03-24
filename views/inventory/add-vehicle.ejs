@@ -2,11 +2,14 @@
   <h1>Add New Vehicle</h1>
 
   <form action="/inv/add-vehicle" method="post" class="form-group">
+    <!-- Classification Dropdown -->
     <div class="form-field">
       <label for="classification_id">Classification:</label>
       <%- dropdown %>
+      <small style="color: var(--text-light); margin-top: 0.25rem;">* Required</small>
     </div>
 
+    <!-- Make Field -->
     <div class="form-field">
       <label for="inv_make">Make:</label>
       <input
@@ -15,10 +18,11 @@
         name="inv_make"
         value="<%= typeof locals.inv_make !== 'undefined' ? locals.inv_make : '' %>"
         required
-        placeholder="e.g. Honda, Toyota, Ford"
+        placeholder="e.g., Honda, Toyota, Ford"
       />
     </div>
 
+    <!-- Model Field -->
     <div class="form-field">
       <label for="inv_model">Model:</label>
       <input
@@ -27,10 +31,11 @@
         name="inv_model"
         value="<%= typeof locals.inv_model !== 'undefined' ? locals.inv_model : '' %>"
         required
-        placeholder="e.g. Civic, Camry, Mustang"
+        placeholder="e.g., Civic, Camry, Mustang"
       />
     </div>
 
+    <!-- Year Field -->
     <div class="form-field">
       <label for="inv_year">Year:</label>
       <input
@@ -39,21 +44,24 @@
         name="inv_year"
         value="<%= typeof locals.inv_year !== 'undefined' ? locals.inv_year : '' %>"
         required
-        placeholder="e.g. 2023"
+        min="1900"
+        max="2100"
+        placeholder="e.g., 2023"
       />
     </div>
 
+    <!-- Description Field -->
     <div class="form-field">
       <label for="inv_description">Description:</label>
       <textarea
         id="inv_description"
         name="inv_description"
-        rows="4"
         required
-        placeholder="Vehicle description..."
+        placeholder="Enter vehicle description..."
       ><%= typeof locals.inv_description !== 'undefined' ? locals.inv_description : '' %></textarea>
     </div>
 
+    <!-- Image Path Field -->
     <div class="form-field">
       <label for="inv_image">Image Path:</label>
       <input
@@ -62,10 +70,12 @@
         name="inv_image"
         value="<%= typeof locals.inv_image !== 'undefined' ? locals.inv_image : '' %>"
         required
-        placeholder="e.g. /images/vehicles/image.jpg"
+        placeholder="e.g., /images/vehicles/image.jpg"
       />
+      <small style="color: var(--text-light); margin-top: 0.25rem;">Full path to the main vehicle image</small>
     </div>
 
+    <!-- Thumbnail Path Field -->
     <div class="form-field">
       <label for="inv_thumbnail">Thumbnail Path:</label>
       <input
@@ -74,12 +84,14 @@
         name="inv_thumbnail"
         value="<%= typeof locals.inv_thumbnail !== 'undefined' ? locals.inv_thumbnail : '' %>"
         required
-        placeholder="e.g. /images/vehicles/thumb.jpg"
+        placeholder="e.g., /images/vehicles/thumb.jpg"
       />
+      <small style="color: var(--text-light); margin-top: 0.25rem;">Full path to the thumbnail image</small>
     </div>
 
+    <!-- Price Field -->
     <div class="form-field">
-      <label for="inv_price">Price:</label>
+      <label for="inv_price">Price ($):</label>
       <input
         type="number"
         id="inv_price"
@@ -87,22 +99,26 @@
         value="<%= typeof locals.inv_price !== 'undefined' ? locals.inv_price : '' %>"
         required
         step="0.01"
-        placeholder="e.g. 25000.00"
+        min="0"
+        placeholder="e.g., 25000.00"
       />
     </div>
 
+    <!-- Mileage Field -->
     <div class="form-field">
-      <label for="inv_miles">Mileage:</label>
+      <label for="inv_miles">Mileage (miles):</label>
       <input
         type="number"
         id="inv_miles"
         name="inv_miles"
         value="<%= typeof locals.inv_miles !== 'undefined' ? locals.inv_miles : '' %>"
         required
-        placeholder="e.g. 50000"
+        min="0"
+        placeholder="e.g., 50000"
       />
     </div>
 
+    <!-- Color Field -->
     <div class="form-field">
       <label for="inv_color">Color:</label>
       <input
@@ -111,92 +127,14 @@
         name="inv_color"
         value="<%= typeof locals.inv_color !== 'undefined' ? locals.inv_color : '' %>"
         required
-        placeholder="e.g. Silver, Red, Blue"
+        placeholder="e.g., Silver, Red, Blue"
       />
     </div>
 
-    <button type="submit" class="btn-submit">Add Vehicle</button>
-    <a href="/inv" class="btn-cancel">Cancel</a>
+    <!-- Form Actions -->
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <button type="submit" class="btn-submit">Add Vehicle</button>
+      <a href="/inv" class="btn-cancel">Cancel</a>
+    </div>
   </form>
 </div>
-
-<style>
-  .form-container {
-    padding: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .form-container h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-field label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-
-  .form-field input,
-  .form-field select,
-  .form-field textarea {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-family: inherit;
-  }
-
-  .form-field input:focus,
-  .form-field select:focus,
-  .form-field textarea:focus {
-    outline: none;
-    border-color: #333;
-    box-shadow: 0 0 5px rgba(51, 51, 51, 0.1);
-  }
-
-  .form-field textarea {
-    resize: vertical;
-  }
-
-  .btn-submit {
-    padding: 0.75rem 1.5rem;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .btn-submit:hover {
-    background-color: #555;
-  }
-
-  .btn-cancel {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: #999;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    text-align: center;
-    transition: background-color 0.3s;
-  }
-
-  .btn-cancel:hover {
-    background-color: #777;
-  }
-</style>

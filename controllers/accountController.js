@@ -65,7 +65,7 @@ async function accountLogin(req, res, next) {
       }
 
       console.log("Login successful for:", account_email)
-      return res.redirect("/account/")
+      return res.redirect("/")
     } else {
       console.log("Password incorrect for:", account_email)
       res.status(400).render("account/login", {
@@ -249,7 +249,7 @@ async function updateAccount(req, res, next) {
       }
 
       req.flash("notice", "Account information updated successfully.")
-      res.redirect("/account/")
+      res.redirect("/account/info")
     } else {
       req.flash("notice", "Sorry, the update failed. Please try again.")
       res.status(400).render("account/update", {
@@ -291,7 +291,7 @@ async function updatePassword(req, res, next) {
 
     if (result && !result.message) {
       req.flash("notice", "Password changed successfully.")
-      res.redirect("/account/")
+      res.redirect("/account/info")
     } else {
       req.flash("notice", "Sorry, the password change failed. Please try again.")
       res.status(400).render("account/update", {

@@ -90,15 +90,16 @@ const checkRegisterData = (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     const nav = res.locals.nav || ""
-    const { account_firstname, account_lastname, account_username, account_email } = req.body
+    const { account_firstname, account_lastname, account_email, account_username } = req.body
     res.render("account/register", {
       errors: errors.array(),
       title: "Create Account",
       nav,
+      hideNav: true,
       account_firstname,
       account_lastname,
-      account_username,
       account_email,
+      account_username,
     })
     return
   }

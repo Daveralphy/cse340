@@ -78,5 +78,20 @@
     btn.disabled = true
     btn.innerHTML = '<span class="spinner"></span>'
   })
+
+  // Submit form on Enter key press
+  document.getElementById("account_email").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      document.getElementById("loginForm").submit()
+    }
+  })
+
+  document.getElementById("account_password").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      document.getElementById("loginForm").submit()
+    }
+  })
   </script>
 </div>

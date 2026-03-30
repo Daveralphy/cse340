@@ -30,7 +30,7 @@ async function accountLogin(req, res, next) {
     const { account_email, account_password } = req.body
     console.log("Login attempt with:", account_email)
     
-    const accountData = await accountModel.getAccountByEmail(account_email)
+    const accountData = await accountModel.getAccountByEmailOrUsername(account_email)
     console.log("Account found:", !!accountData)
 
     if (!accountData) {
@@ -124,7 +124,7 @@ async function buildRegister(req, res, next) {
 async function accountRegister(req, res, next) {
   try {
     const nav = await utilities.getNav()
-    const { account_firstname, account_lastname, account_username, account_email, account_password } = req.body
+    const { account_firstname, account_lastname, account_email, account_username, account_password } = req.body
 
     // Hash the password
     let hashedPassword
@@ -139,8 +139,8 @@ async function accountRegister(req, res, next) {
         errors: [{ msg: "Sorry, there was an error processing the registration." }],
         account_firstname,
         account_lastname,
-        account_username,
         account_email,
+        account_username,
       })
       return
     }
@@ -165,8 +165,8 @@ async function accountRegister(req, res, next) {
         errors: [{ msg: "Sorry, the registration failed. Please try again." }],
         account_firstname,
         account_lastname,
-        account_username,
         account_email,
+        account_username,
       })
     }
   } catch (error) {
@@ -182,8 +182,8 @@ async function accountRegister(req, res, next) {
       errors: [{ msg: errorMsg }],
       account_firstname: req.body.account_firstname || "",
       account_lastname: req.body.account_lastname || "",
-      account_username: req.body.account_username || "",
       account_email: req.body.account_email || "",
+      account_username: req.body.account_username || "",
     })
   }
 }

@@ -98,6 +98,7 @@ async function buildManagement(req, res) {
     title: "Account Management",
     nav,
     errors: null,
+    layout: false,
   })
 }
 
@@ -110,6 +111,7 @@ async function buildInfo(req, res) {
     title: "Account Information",
     nav,
     errors: null,
+    layout: false,
   })
 }
 
@@ -211,6 +213,7 @@ async function buildUpdate(req, res, next) {
       nav,
       errors: null,
       accountData: res.locals.accountData,
+      layout: false,
     })
   } catch (error) {
     next(error)
@@ -257,6 +260,7 @@ async function updateAccount(req, res, next) {
         nav,
         errors: null,
         accountData: res.locals.accountData,
+        layout: false,
       })
     }
   } catch (error) {
@@ -283,6 +287,7 @@ async function updatePassword(req, res, next) {
         nav,
         errors: null,
         accountData: res.locals.accountData,
+        layout: false,
       })
       return
     }
@@ -299,6 +304,7 @@ async function updatePassword(req, res, next) {
         nav,
         errors: null,
         accountData: res.locals.accountData,
+        layout: false,
       })
     }
   } catch (error) {

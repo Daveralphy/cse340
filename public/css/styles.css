@@ -24,7 +24,14 @@
 /* ==========================================
    Base / Reset Styles (Mobile First)
    ========================================== */
+html {
+  height: 100%;
+}
+
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   font-family: 'Raleway', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,6 +39,12 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--bg-color);
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 img {
@@ -273,12 +286,14 @@ footer {
   background-color: var(--primary-color);
   color: var(--white);
   text-align: center;
-  padding: 1rem;
-  margin-top: 2rem;
+  padding: 1.25rem 1rem;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 footer p {
   margin: 0;
+  font-size: 0.95rem;
 }
 
 footer a {
@@ -625,6 +640,14 @@ form {
     width: 100px;
     height: 100px;
   }
+
+  footer {
+    padding: 1.5rem 2rem;
+  }
+
+  footer p {
+    font-size: 1rem;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -639,5 +662,241 @@ form {
   .btn-primary,
   .btn-secondary {
     text-align: center;
+  }
+}
+
+/* ==========================================
+   Authentication Forms (Login/Register)
+   ========================================== */
+.auth-container {
+  max-width: 90%;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.75rem;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container label {
+  margin-top: 0.8rem;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.auth-container input {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(26, 61, 92, 0.1);
+}
+
+.auth-container button[type="submit"] {
+  margin-top: 1.5rem;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: opacity 0.2s ease;
+}
+
+.auth-container button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+.auth-container button[type="submit"]:active {
+  opacity: 0.8;
+}
+
+.auth-container button[type="button"] {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--bg-light);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+
+.auth-container button[type="button"]:hover {
+  background-color: #e0e0e0;
+}
+
+.auth-container p {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.auth-container small {
+  display: block;
+  margin-top: 0.8rem;
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+.auth-container a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-container a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+/* Two-column layout for first and last name */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-row-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row-item label {
+  margin-top: 0.8rem;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.form-row-item input {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.form-row-item input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(26, 61, 92, 0.1);
+}
+
+/* ==========================================
+   Password Input Wrapper
+   ========================================== */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.password-input-wrapper input {
+  flex: 1;
+  padding-right: 2.5rem;
+  margin: 0 !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-light);
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+}
+
+/* ==========================================
+   Responsive Auth Container
+   ========================================== */
+@media screen and (min-width: 768px) {
+  .auth-container {
+    max-width: 70%;
+    margin: 3rem auto;
+    padding: 2.5rem;
+  }
+
+  .auth-container h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .auth-container label {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+  .auth-container input {
+    padding: 0.75rem;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .auth-container button[type="button"] {
+    font-size: 0.95rem;
+  }
+
+  .auth-container p {
+    font-size: 0.95rem;
+  }
+
+  .auth-container small {
+    font-size: 0.85rem;
+  }
+
+  .form-row-item label {
+    font-size: 1rem;
+  }
+
+  .form-row-item input {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .auth-container {
+    max-width: 55%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .auth-container {
+    max-width: 45%;
   }
 }

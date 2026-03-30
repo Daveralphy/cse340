@@ -3,10 +3,14 @@
 <%- include("../partials/head") %>
 <body>
   <%- include("../partials/header") %>
-  <% if (typeof nav !== "undefined") { %>
-    <%- nav %>
+  <% if (typeof hideNav !== "undefined" && hideNav) { %>
+    <!-- Navigation hidden for auth pages -->
   <% } else { %>
-    <%- include("../partials/navigation") %>
+    <% if (typeof nav !== "undefined") { %>
+      <%- nav %>
+    <% } else { %>
+      <%- include("../partials/navigation") %>
+    <% } %>
   <% } %>
   
   <!-- Flash Messages -->

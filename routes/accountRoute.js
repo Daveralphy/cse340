@@ -14,6 +14,16 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
+// Register Routes
+router.get("/register", utilities.handleErrors(accountController.buildRegister))
+
+router.post(
+  "/register",
+  regValidate.registerRules(),
+  regValidate.checkRegisterData,
+  utilities.handleErrors(accountController.accountRegister)
+)
+
 // Account Management (protected route)
 router.get(
   "/",

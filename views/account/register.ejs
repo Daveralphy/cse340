@@ -1,0 +1,53 @@
+<div class="auth-container">
+  <h1>Create Account</h1>
+
+  <% if (notice && notice.length > 0) { %>
+    <p><%= notice %></p>
+  <% } %>
+
+  <form action="/account/register" method="post">
+
+    <div class="form-row">
+      <div class="form-row-item">
+        <label>First Name</label>
+        <input type="text" name="account_firstname" required>
+      </div>
+      <div class="form-row-item">
+        <label>Last Name</label>
+        <input type="text" name="account_lastname" required>
+      </div>
+    </div>
+
+    <label>Username</label>
+    <input type="text" name="account_username" required>
+
+    <label>Email</label>
+    <input type="email" name="account_email" required>
+
+    <label>Password</label>
+    <input type="password" id="password" name="account_password" required>
+
+    <label>Confirm Password</label>
+    <input type="password" id="confirm_password" required>
+
+    <button type="submit">Create Account</button>
+
+    <p>
+      Already have an account?
+      <a href="/account/login">Log In</a>
+    </p>
+
+  </form>
+
+  <script>
+  document.querySelector("form").addEventListener("submit", function(e) {
+    const password = document.getElementById("password").value
+    const confirm = document.getElementById("confirm_password").value
+
+    if (password !== confirm) {
+      e.preventDefault()
+      alert("Passwords do not match")
+    }
+  })
+  </script>
+</div>

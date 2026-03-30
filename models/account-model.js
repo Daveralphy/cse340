@@ -15,6 +15,23 @@ async function getAccountByEmail(account_email) {
   }
 }
 
+/* ****************************
+ * Register new account
+ * ***************************** */
+async function registerAccount(account) {
+  try {
+    const { account_firstname, account_lastname, account_email, account_username, account_password } = account
+    const result = await pool.query(
+      "INSERT INTO account (account_firstname, account_lastname, account_email, account_username, account_password, account_type) VALUES ($1, $2, $3, $4, $5, 'client') RETURNING *",
+      [account_firstname, account_lastname, account_email, account_username, account_password]
+    )
+    return result.rows[0]
+  } catch (error) {
+    return error.message
+  }
+}
+
 module.exports = {
   getAccountByEmail,
+  registerAccount,
 }

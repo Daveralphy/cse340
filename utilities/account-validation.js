@@ -5,13 +5,12 @@ const { body, validationResult } = require("express-validator")
  * ***************************** */
 const loginRules = () => {
   return [
-    // Validate Email
+    // Validate Email/Username (just need something)
     body("account_email")
       .trim()
       .escape()
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("A valid email is required."),
+      .isLength({ min: 1 })
+      .withMessage("Email or username is required."),
 
     // Validate Password
     body("account_password")
@@ -29,10 +28,12 @@ const checkLoginData = (req, res, next) => {
   if (!errors.isEmpty()) {
     const nav = res.locals.nav || ""
     const { account_email } = req.body
+    console.log("Login validation errors:", errors.array())
     res.render("account/login", {
-      errors: errors.array(),
       title: "Login",
       nav,
+      hideNav: true,
+      errors: errors.array(),
       account_email,
     })
     return

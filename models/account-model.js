@@ -1,12 +1,13 @@
 const pool = require("../database")
 
 /* ****************************
- * Return account data using email address
+ * Return account data using email address or username
  * ***************************** */
 async function getAccountByEmail(account_email) {
   try {
+    // Try to match by email OR username
     const result = await pool.query(
-      "SELECT account_id, account_firstname, account_lastname, account_email, account_type, account_password FROM account WHERE account_email = $1",
+      "SELECT account_id, account_firstname, account_lastname, account_email, account_type, account_password FROM account WHERE account_email = $1 OR account_username = $1",
       [account_email]
     )
     return result.rows[0]

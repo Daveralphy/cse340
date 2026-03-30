@@ -28,21 +28,27 @@ async function accountLogin(req, res, next) {
   try {
     let nav = await utilities.getNav()
     const { account_email, account_password } = req.body
+    console.log("Login attempt with:", account_email)
+    
     const accountData = await accountModel.getAccountByEmail(account_email)
+    console.log("Account found:", !!accountData)
 
     if (!accountData) {
-      req.flash("notice", "Please check your credentials and try again.")
+      console.log("No account found for:", account_email)
       res.status(400).render("account/login", {
         title: "Login",
         nav,
         hideNav: true,
-        errors: null,
+        errors: [{ msg: "Email, username, or password is incorrect." }],
         account_email,
       })
       return
     }
 
-    if (await bcrypt.compare(account_password, accountData.account_password)) {
+    const passwordMatch = await bcrypt.compare(account_password, accountData.account_password)
+    console.log("Password match:", passwordMatch)
+
+    if (passwordMatch) {
       delete accountData.account_password
       const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: 3600 * 1000,
@@ -58,14 +64,15 @@ async function accountLogin(req, res, next) {
         })
       }
 
+      console.log("Login successful for:", account_email)
       return res.redirect("/account/")
     } else {
-      req.flash("notice", "Please check your credentials and try again.")
+      console.log("Password incorrect for:", account_email)
       res.status(400).render("account/login", {
         title: "Login",
         nav,
         hideNav: true,
-        errors: null,
+        errors: [{ msg: "Email, username, or password is incorrect." }],
         account_email,
       })
     }
@@ -76,7 +83,7 @@ async function accountLogin(req, res, next) {
       title: "Login",
       nav,
       hideNav: true,
-      errors: [{ msg: "Sorry, there was an error logging in. Please try again." }],
+      errors: [{ msg: "Server error. Please try again later." }],
       account_email: req.body.account_email || "",
     })
   }

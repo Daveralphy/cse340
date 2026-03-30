@@ -13,7 +13,9 @@ const flash = require("connect-flash")
 const app = express()
 const static = require("./routes/static")
 const invRoute = require("./routes/inventoryRoute")
+const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities")
+const cookieParser = require("cookie-parser")
 
 /* ***********************
  * View Engine and Templates
@@ -42,12 +44,15 @@ app.use((req, res, next) => {
 // Body parser middleware
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cookieParser())
+app.use(utilities.checkJWTToken)
 
 /* ***********************
  * Routes
  *************************/
 app.use(static)
 app.use("/inv", invRoute)
+app.use("/account", accountRoute)
 
 // Index route
 app.get("/", async function (req, res, next) {
@@ -90,6 +95,8 @@ app.use(async (err, req, res, next) => {
     res.status(500).send("Server Error")
   }
 })
+
+app.use(cookieParser())
 
 /* ***********************
  * Local Server Information

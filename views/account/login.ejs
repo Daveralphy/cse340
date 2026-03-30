@@ -1,0 +1,19 @@
+<%- include("../partials/header") %>
+
+<h1>Login</h1>
+
+<% if (notice) { %>
+  <p><%= notice %></p>
+<% } %>
+
+<form id="loginForm" action="/account/login" method="post">
+  <label>Email</label>
+  <input type="email" name="account_email" required>
+
+  <label>Password</label>
+  <input type="password" name="account_password" required>
+
+  <button type="submit">Login</button>
+</form>
+
+<%- include("../partials/footer") %>

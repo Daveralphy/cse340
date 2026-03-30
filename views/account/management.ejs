@@ -1,4 +1,9 @@
-<%- include("../partials/header") %>
+<!DOCTYPE html>
+<html lang="en">
+<%- include("../partials/head") %>
+<body>
+  <%- include("../partials/header") %>
+  <%- include("../partials/navigation") %>
 
 <div style="text-align: center; margin: 40px 0;">
   <h1>Welcome <%= accountData.account_firstname %>!</h1>
@@ -21,4 +26,6 @@
 
 </div>
 
-<%- include("../partials/footer") %>
+  <%- include("../partials/footer") %>
+</body>
+</html>

@@ -2,12 +2,26 @@ const invModel = require("../models/inventory-model")
 const utilities = require("../utilities/")
 const { body, validationResult } = require("express-validator")
 
-// Management page - render management view - MUST use controller (not direct view call)
+// Inventory home page - show intro and action buttons
 async function buildManagement(req, res, next) {
   try {
-    res.render("inventory/management", {
+    res.render("inventory/index", {
       title: "Inventory Management",
-      nav: await utilities.getNav(),
+      hideNav: true,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Manage inventory page - show classification dropdown and inventory table
+async function buildManagementView(req, res, next) {
+  try {
+    const classificationSelect = await utilities.buildClassificationList()
+    res.render("inventory/management", {
+      title: "Manage Inventory",
+      hideNav: true,
+      classificationSelect: classificationSelect,
     })
   } catch (error) {
     next(error)
@@ -19,7 +33,7 @@ async function buildAddClassification(req, res, next) {
   try {
     res.render("inventory/add-classification", {
       title: "Add Classification",
-      nav: await utilities.getNav(),
+      hideNav: true,
     })
   } catch (error) {
     next(error)
@@ -66,7 +80,7 @@ async function addClassification(req, res, next) {
       req.flash("error", errors.join(". "))
       return res.status(400).render("inventory/add-classification", {
         title: "Add Classification",
-        nav: await utilities.getNav(),
+        hideNav: true,
         classification_name, // Sticky form value
       })
     }
@@ -82,7 +96,7 @@ async function buildAddVehicle(req, res, next) {
     const dropdown = await utilities.getClassificationDropdown()
     res.render("inventory/add-vehicle", {
       title: "Add Vehicle",
-      nav: await utilities.getNav(),
+      hideNav: true,
       dropdown,
     })
   } catch (error) {
@@ -189,7 +203,7 @@ async function addVehicle(req, res, next) {
       req.flash("error", errors.join(". "))
       return res.status(400).render("inventory/add-vehicle", {
         title: "Add Vehicle",
-        nav: await utilities.getNav(),
+        hideNav: true,
         dropdown,
         ...validationData, // Spread all sticky form values
       })
@@ -235,7 +249,7 @@ async function buildByClassificationId(req, res, next) {
 
     res.render("inventory/classification", {
       title: className + " vehicles",
-      nav: await utilities.getNav(),
+      hideNav: true,
       grid,
     })
   } catch (error) {
@@ -258,7 +272,7 @@ async function buildVehicleDetail(req, res, next) {
 
     res.render("inventory/detail", {
       title: data.inv_make + " " + data.inv_model,
-      nav: await utilities.getNav(),
+      hideNav: true,
       detail: detailHTML,
       classificationId: data.classification_id,
     })
@@ -271,8 +285,26 @@ function triggerIntentionalError(req, res, next) {
   next(new Error("Intentional error"))
 }
 
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+async function getInventoryJSON(req, res, next) {
+  const classification_id = parseInt(req.params.classification_id)
+
+  const invData = await invModel.getInventoryByClassificationId(
+    classification_id
+  )
+
+  if (invData[0].inv_id) {
+    return res.json(invData)
+  } else {
+    next(new Error("No data returned"))
+  }
+}
+
 module.exports = {
   buildManagement,
+  buildManagementView,
   buildAddClassification,
   addClassification,
   buildAddVehicle,
@@ -280,4 +312,5 @@ module.exports = {
   buildByClassificationId,
   buildVehicleDetail,
   triggerIntentionalError,
+  getInventoryJSON,
 }

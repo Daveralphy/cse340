@@ -1,12 +1,13 @@
 <div class="management-container">
-  <h1>Inventory Management</h1>
-  
-  <div class="management-intro">
-    <p>Welcome to the Inventory Management Center. Here you can add new vehicle classifications to organize our inventory by type, and add new vehicles to our system. Use the buttons below to get started.</p>
-  </div>
-  
-  <div class="management-links">
-    <a href="/inv/add-classification" class="btn-primary">Add Classification</a>
-    <a href="/inv/add-vehicle" class="btn-primary">Add Vehicle</a>
-  </div>
+  <h1>Manage Inventory</h1>
+
+  <p>Select a classification to see inventory items.</p>
+
+  <%- classificationSelect %>
+
+  <table id="inventoryDisplay"></table>
+
+  <noscript>JavaScript must be enabled to use this page.</noscript>
+
+  <script src="/js/inventory.js"></script>
 </div>

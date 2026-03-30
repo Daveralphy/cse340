@@ -63,6 +63,19 @@ function buildClassificationGrid(data) {
   return grid
 }
 
+async function buildClassificationList() {
+  const data = await invModel.getClassifications()
+  let list = '<select id="classificationList">'
+  list += '<option value="">-- Select a Classification --</option>'
+  
+  data.forEach((row) => {
+    list += `<option value="${row.classification_id}">${row.classification_name}</option>`
+  })
+  
+  list += '</select>'
+  return list
+}
+
 function buildVehicleDetailHTML(vehicle) {
   const price = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -128,6 +141,7 @@ module.exports = {
   handleErrors,
   getNav,
   getClassificationDropdown,
+  buildClassificationList,
   buildClassificationGrid,
   buildVehicleDetailHTML,
   checkJWTToken,

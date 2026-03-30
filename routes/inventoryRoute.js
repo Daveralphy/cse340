@@ -3,8 +3,17 @@ const router = new express.Router()
 const inventoryController = require("../controllers/inventoryController")
 const utilities = require("../utilities")
 
-// Management page
+// Inventory home page
 router.get("/", utilities.handleErrors(inventoryController.buildManagement))
+
+// Manage inventory page
+router.get("/management", utilities.handleErrors(inventoryController.buildManagementView))
+
+// Get inventory by classification as JSON
+router.get(
+  "/getInventory/:classification_id",
+  utilities.handleErrors(inventoryController.getInventoryJSON)
+)
 
 // Add classification routes
 router.get("/add-classification", utilities.handleErrors(inventoryController.buildAddClassification))

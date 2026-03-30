@@ -1,17 +1,28 @@
 <div class="auth-container">
   <h1>Login</h1>
 
-  <% if (notice && notice.length > 0) { %>
-    <p><%= notice %></p>
+  <% if (errors && errors.length > 0) { %>
+    <div class="error-messages" id="errorBox">
+      <% errors.forEach(error => { %>
+        <p><%= error.msg %></p>
+      <% }) %>
+    </div>
   <% } %>
 
-  <form action="/account/login" method="post">
+  <% if (notice && notice.length > 0) { %>
+    <div class="notice-messages" id="noticeBox">
+      <p><%= notice %></p>
+    </div>
+  <% } %>
+
+  <form action="/account/login" method="post" id="loginForm">
 
     <label for="account_email">Email or Username</label>
     <input 
       type="text" 
       name="account_email" 
       id="account_email" 
+      value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
       required
     >
 
@@ -30,7 +41,7 @@
       <a href="#">Forgot Password?</a>
     </small>
 
-    <button type="submit">Login</button>
+    <button type="submit" id="submitBtn">Login</button>
 
     <p>
       Do not have an account yet?
@@ -44,5 +55,28 @@
     const password = document.getElementById("account_password")
     password.type = password.type === "password" ? "text" : "password"
   }
+
+  // Auto-dismiss error messages
+  const errorBox = document.getElementById("errorBox")
+  if (errorBox) {
+    setTimeout(() => {
+      errorBox.style.display = "none"
+    }, 3000)
+  }
+
+  // Auto-dismiss notice messages
+  const noticeBox = document.getElementById("noticeBox")
+  if (noticeBox) {
+    setTimeout(() => {
+      noticeBox.style.display = "none"
+    }, 3000)
+  }
+
+  // Loading animation on submit
+  document.getElementById("loginForm").addEventListener("submit", function(e) {
+    const btn = document.getElementById("submitBtn")
+    btn.disabled = true
+    btn.innerHTML = '<span class="spinner"></span>'
+  })
   </script>
 </div>

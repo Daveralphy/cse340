@@ -24,24 +24,24 @@ async function buildLogin(req, res, next) {
 /* ****************************
  * Process Login Request
  * ***************************** */
-async function accountLogin(req, res) {
-  let nav = await utilities.getNav()
-  const { account_email, account_password } = req.body
-  const accountData = await accountModel.getAccountByEmail(account_email)
-
-  if (!accountData) {
-    req.flash("notice", "Please check your credentials and try again.")
-    res.status(400).render("account/login", {
-      title: "Login",
-      nav,
-      hideNav: true,
-      errors: null,
-      account_email,
-    })
-    return
-  }
-
+async function accountLogin(req, res, next) {
   try {
+    let nav = await utilities.getNav()
+    const { account_email, account_password } = req.body
+    const accountData = await accountModel.getAccountByEmail(account_email)
+
+    if (!accountData) {
+      req.flash("notice", "Please check your credentials and try again.")
+      res.status(400).render("account/login", {
+        title: "Login",
+        nav,
+        hideNav: true,
+        errors: null,
+        account_email,
+      })
+      return
+    }
+
     if (await bcrypt.compare(account_password, accountData.account_password)) {
       delete accountData.account_password
       const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, {
@@ -70,7 +70,15 @@ async function accountLogin(req, res) {
       })
     }
   } catch (error) {
-    throw new Error("Access Forbidden")
+    console.error("Login error:", error)
+    let nav = await utilities.getNav()
+    res.status(500).render("account/login", {
+      title: "Login",
+      nav,
+      hideNav: true,
+      errors: [{ msg: "Sorry, there was an error logging in. Please try again." }],
+      account_email: req.body.account_email || "",
+    })
   }
 }
 
@@ -116,12 +124,16 @@ async function accountRegister(req, res, next) {
     try {
       hashedPassword = await bcrypt.hash(account_password, 10)
     } catch (error) {
-      req.flash("notice", "Sorry, there was an error processing the registration.")
+      console.error("Password hashing error:", error)
       res.status(500).render("account/register", {
         title: "Create Account",
         nav,
         hideNav: true,
-        errors: null,
+        errors: [{ msg: "Sorry, there was an error processing the registration." }],
+        account_firstname,
+        account_lastname,
+        account_username,
+        account_email,
       })
       return
     }
@@ -139,12 +151,11 @@ async function accountRegister(req, res, next) {
       req.flash("notice", "Registration successful! Please log in.")
       res.status(201).redirect("/account/login")
     } else {
-      req.flash("notice", "Sorry, the registration failed. Please try again.")
       res.status(400).render("account/register", {
         title: "Create Account",
         nav,
         hideNav: true,
-        errors: null,
+        errors: [{ msg: "Sorry, the registration failed. Please try again." }],
         account_firstname,
         account_lastname,
         account_username,
@@ -152,12 +163,20 @@ async function accountRegister(req, res, next) {
       })
     }
   } catch (error) {
-    req.flash("notice", "Sorry, there was an error processing the registration.")
+    console.error("Registration error:", error)
+    let errorMsg = "Sorry, the email or username may already be in use. Please try again."
+    if (error.message && error.message.includes("connection")) {
+      errorMsg = "Database connection error. Please try again later."
+    }
     res.status(500).render("account/register", {
       title: "Create Account",
       nav: await utilities.getNav(),
       hideNav: true,
-      errors: null,
+      errors: [{ msg: errorMsg }],
+      account_firstname: req.body.account_firstname || "",
+      account_lastname: req.body.account_lastname || "",
+      account_username: req.body.account_username || "",
+      account_email: req.body.account_email || "",
     })
   }
 }

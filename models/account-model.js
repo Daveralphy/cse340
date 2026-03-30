@@ -11,7 +11,8 @@ async function getAccountByEmail(account_email) {
     )
     return result.rows[0]
   } catch (error) {
-    return new Error("No matching email found")
+    console.error("Database error in getAccountByEmail:", error)
+    throw error
   }
 }
 
@@ -26,7 +27,8 @@ async function getAccountById(account_id) {
     )
     return result.rows[0]
   } catch (error) {
-    return new Error("No matching account found")
+    console.error("Database error in getAccountById:", error)
+    throw error
   }
 }
 
@@ -42,7 +44,8 @@ async function registerAccount(account) {
     )
     return result.rows[0]
   } catch (error) {
-    return error.message
+    console.error("Database error in registerAccount:", error)
+    throw error
   }
 }
 

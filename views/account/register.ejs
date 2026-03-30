@@ -1,28 +1,58 @@
 <div class="auth-container">
   <h1>Create Account</h1>
 
-  <% if (notice && notice.length > 0) { %>
-    <p><%= notice %></p>
+  <% if (errors && errors.length > 0) { %>
+    <div class="error-messages" id="errorBox">
+      <% errors.forEach(error => { %>
+        <p><%= error.msg %></p>
+      <% }) %>
+    </div>
   <% } %>
 
-  <form action="/account/register" method="post">
+  <% if (notice && notice.length > 0) { %>
+    <div class="notice-messages" id="noticeBox">
+      <p><%= notice %></p>
+    </div>
+  <% } %>
+
+  <form action="/account/register" method="post" id="registerForm">
 
     <div class="form-row">
       <div class="form-row-item">
         <label>First Name</label>
-        <input type="text" name="account_firstname" required>
+        <input 
+          type="text" 
+          name="account_firstname" 
+          value="<%= typeof account_firstname !== 'undefined' ? account_firstname : '' %>"
+          required
+        >
       </div>
       <div class="form-row-item">
         <label>Last Name</label>
-        <input type="text" name="account_lastname" required>
+        <input 
+          type="text" 
+          name="account_lastname" 
+          value="<%= typeof account_lastname !== 'undefined' ? account_lastname : '' %>"
+          required
+        >
       </div>
     </div>
 
     <label>Username</label>
-    <input type="text" name="account_username" required>
+    <input 
+      type="text" 
+      name="account_username" 
+      value="<%= typeof account_username !== 'undefined' ? account_username : '' %>"
+      required
+    >
 
     <label>Email</label>
-    <input type="email" name="account_email" required>
+    <input 
+      type="email" 
+      name="account_email" 
+      value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+      required
+    >
 
     <label>Password</label>
     <input type="password" id="password" name="account_password" required>
@@ -30,7 +60,7 @@
     <label>Confirm Password</label>
     <input type="password" id="confirm_password" required>
 
-    <button type="submit">Create Account</button>
+    <button type="submit" id="submitBtn">Create Account</button>
 
     <p>
       Already have an account?
@@ -40,14 +70,36 @@
   </form>
 
   <script>
-  document.querySelector("form").addEventListener("submit", function(e) {
+  // Auto-dismiss error messages
+  const errorBox = document.getElementById("errorBox")
+  if (errorBox) {
+    setTimeout(() => {
+      errorBox.style.display = "none"
+    }, 3000)
+  }
+
+  // Auto-dismiss notice messages
+  const noticeBox = document.getElementById("noticeBox")
+  if (noticeBox) {
+    setTimeout(() => {
+      noticeBox.style.display = "none"
+    }, 3000)
+  }
+
+  // Loading animation on submit
+  document.getElementById("registerForm").addEventListener("submit", function(e) {
     const password = document.getElementById("password").value
     const confirm = document.getElementById("confirm_password").value
 
     if (password !== confirm) {
       e.preventDefault()
       alert("Passwords do not match")
+      return
     }
+
+    const btn = document.getElementById("submitBtn")
+    btn.disabled = true
+    btn.innerHTML = '<span class="spinner"></span>'
   })
   </script>
 </div>

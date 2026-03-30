@@ -1,0 +1,47 @@
+<%- include("../layouts/layout") %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+  <h1>Account Information</h1>
+  <a href="/account/update" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; cursor: pointer;">Update Account</a>
+</div>
+
+<div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; max-width: 600px;">
+  <div style="margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">First Name</label>
+    <p style="margin: 0; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px;">
+      <%= accountData.account_firstname %>
+    </p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Last Name</label>
+    <p style="margin: 0; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px;">
+      <%= accountData.account_lastname %>
+    </p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Username</label>
+    <p style="margin: 0; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px;">
+      <%= accountData.account_username %>
+    </p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Email</label>
+    <p style="margin: 0; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px;">
+      <%= accountData.account_email %>
+    </p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Account Type</label>
+    <p style="margin: 0; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px;">
+      <%= accountData.account_type %>
+    </p>
+  </div>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+  <a href="/account/" style="padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;">Back to Dashboard</a>
+</div>

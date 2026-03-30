@@ -102,6 +102,18 @@ async function buildManagement(req, res) {
 }
 
 /* ****************************
+ * Build Account Info Page (Read-Only)
+ * ***************************** */
+async function buildInfo(req, res) {
+  let nav = await utilities.getNav()
+  res.render("account/info", {
+    title: "Account Information",
+    nav,
+    errors: null,
+  })
+}
+
+/* ****************************
  * Build Register Page
  * ***************************** */
 async function buildRegister(req, res, next) {
@@ -306,6 +318,7 @@ module.exports = {
   buildLogin,
   accountLogin,
   buildManagement,
+  buildInfo,
   buildRegister,
   accountRegister,
   buildUpdate,

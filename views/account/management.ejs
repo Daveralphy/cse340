@@ -1,12 +1,22 @@
-<%- include("../partials/header") %>
+<%- include("../layouts/layout") %>
 
-<h1>Welcome <%= accountData.account_firstname %></h1>
+<div style="text-align: center; margin: 40px 0;">
+  <h1>Welcome <%= accountData.account_firstname %>!</h1>
+  <p style="font-size: 16px; color: #666;">Account Dashboard</p>
+</div>
 
-<% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
-  <h2>Inventory Management</h2>
-  <p><a href="/inv/">Manage Inventory</a></p>
-<% } %>
+<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  
+  <div style="background-color: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
+    <h2 style="margin-top: 0;">Account</h2>
+    <p><a href="/account/info" style="color: #007bff; text-decoration: none; font-weight: bold;">View Account Information →</a></p>
+  </div>
 
-<p><a href="/account/update">Update Account Information</a></p>
+  <% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
+    <div style="background-color: #f0fff4; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+      <h2 style="margin-top: 0;">Inventory Management</h2>
+      <p><a href="/inv/" style="color: #28a745; text-decoration: none; font-weight: bold;">Manage Inventory →</a></p>
+    </div>
+  <% } %>
 
-<%- include("../partials/footer") %>
+</div>

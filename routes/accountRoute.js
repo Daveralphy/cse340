@@ -31,6 +31,13 @@ router.get(
   utilities.handleErrors(accountController.buildManagement)
 )
 
+// Account Info - View Account Details (protected route)
+router.get(
+  "/info",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildInfo)
+)
+
 // Account Update (protected route)
 router.get(
   "/update",

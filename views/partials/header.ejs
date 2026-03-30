@@ -2,8 +2,7 @@
   <span class="site-name"><a href="/">CSE Motors</a></span>
   <div id="tools">
     <% if (typeof loggedin !== "undefined" && loggedin) { %>
-      <span>Welcome <%= accountData.account_firstname %></span>
-      <a href="/account/update" title="Update account information">Account</a>
+      <span>Welcome <a href="/account/info" title="View account information" style="color: inherit; text-decoration: underline; cursor: pointer;"><%= accountData.account_firstname %></a></span>
       <a href="/account/logout" title="Log out">Logout</a>
     <% } else { %>
       <a title="Click to log in" href="/account/login">My Account</a>

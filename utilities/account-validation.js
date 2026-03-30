@@ -176,6 +176,18 @@ const passwordRules = () => {
       .withMessage("Password must contain at least one uppercase letter.")
       .matches(/[!@#$%^&*]/)
       .withMessage("Password must contain at least one special character (!@#$%^&*)."),
+
+    // Validate Confirm Password
+    body("confirm_password")
+      .trim()
+      .isLength({ min: 8 })
+      .withMessage("Confirm password must be at least 8 characters.")
+      .custom((value, { req }) => {
+        if (value !== req.body.account_password) {
+          throw new Error("Passwords do not match.")
+        }
+        return true
+      }),
   ]
 }
 

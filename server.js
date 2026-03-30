@@ -35,9 +35,11 @@ app.use(session({
 }))
 app.use(flash())
 
-// Make flash messages available in templates
+// Make flash messages available globally to templates
 app.use((req, res, next) => {
-  res.locals.messages = req.flash()
+  const allMessages = req.flash()
+  res.locals.messages = allMessages
+  res.locals.notice = allMessages.notice || []
   next()
 })
 

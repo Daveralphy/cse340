@@ -2,9 +2,9 @@
   <span class="site-name"><a href="/">CSE Motors</a></span>
   <div id="tools">
     <% if (typeof loggedin !== "undefined" && loggedin) { %>
-      <span>
-        Welcome, <a href="/account/info" title="View account information" style="color: inherit; text-decoration: none; cursor: pointer; font-weight: bold;"><%= accountData.account_firstname %></a>
-        <a href="/account/logout" title="Log out" style="margin-left: 20px; padding: 8px 16px; border: 2px solid red; color: red; text-decoration: none; border-radius: 4px; cursor: pointer;">Logout</a>
+      <span style="display: flex; align-items: center; gap: 20px;">
+        <span>Welcome, <a href="/account/info" title="View account information" style="color: inherit; text-decoration: none; cursor: pointer; border: none; background: none; padding: 0;"><%= accountData.account_firstname %></a>...</span>
+        <a href="/account/logout" title="Log out" style="padding: 8px 16px; border: 2px solid red; color: red; text-decoration: none; border-radius: 4px; cursor: pointer; background: none;">Logout</a>
       </span>
     <% } else { %>
       <a title="Click to log in" href="/account/login">My Account</a>

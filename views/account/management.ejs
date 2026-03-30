@@ -1,7 +1,12 @@
 <%- include("../partials/header") %>
 
-<h1>Account Management</h1>
+<h1>Welcome <%= accountData.account_firstname %></h1>
 
-<p>You're logged in</p>
+<% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
+  <h2>Inventory Management</h2>
+  <p><a href="/inv/">Manage Inventory</a></p>
+<% } %>
+
+<p><a href="/account/update">Update Account Information</a></p>
 
 <%- include("../partials/footer") %>

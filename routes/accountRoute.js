@@ -31,4 +31,34 @@ router.get(
   utilities.handleErrors(accountController.buildManagement)
 )
 
+// Account Update (protected route)
+router.get(
+  "/update",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildUpdate)
+)
+
+router.post(
+  "/update",
+  utilities.checkLogin,
+  regValidate.updateRules(),
+  regValidate.checkUpdateData,
+  utilities.handleErrors(accountController.updateAccount)
+)
+
+// Password Update (protected route)
+router.post(
+  "/update-password",
+  utilities.checkLogin,
+  regValidate.passwordRules(),
+  regValidate.checkPasswordData,
+  utilities.handleErrors(accountController.updatePassword)
+)
+
+// Logout
+router.get(
+  "/logout",
+  utilities.handleErrors(accountController.logout)
+)
+
 module.exports = router

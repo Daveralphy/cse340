@@ -161,6 +161,25 @@ const checkLogin = (req, res, next) => {
   }
 }
 
+/* ****************************
+ * Check Authorization (Employee/Admin only)
+ * For inventory management routes
+ * ***************************** */
+const checkInventoryAuth = (req, res, next) => {
+  if (!res.locals.loggedin) {
+    req.flash("notice", "Please log in first.")
+    return res.redirect("/account/login")
+  }
+
+  const accountType = res.locals.accountData?.account_type
+  if (accountType !== "Employee" && accountType !== "Admin") {
+    req.flash("notice", "You do not have permission to access inventory management.")
+    return res.redirect("/")
+  }
+
+  next()
+}
+
 module.exports = {
   handleErrors,
   getNav,
@@ -171,4 +190,5 @@ module.exports = {
   buildVehicleDeleteHTML,
   checkJWTToken,
   checkLogin,
+  checkInventoryAuth,
 }

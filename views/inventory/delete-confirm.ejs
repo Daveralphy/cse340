@@ -1,0 +1,46 @@
+<section>
+  <%- detail %>
+</section>
+
+<div class="delete-actions">
+  <a href="/inv/management" class="btn-secondary">Modify Instead</a>
+  <button type="button" class="btn-delete" id="deleteBtn">Delete</button>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <h2>Confirm Deletion</h2>
+    <p>Are you sure you want to delete <strong><%= inv_make %> <%= inv_model %></strong>?</p>
+    <p class="modal-warning">This is a permanent action and cannot be undone.</p>
+    
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+      <form method="post" action="/inv/delete" style="display: inline;">
+        <input type="hidden" name="inv_id" value="<%= inv_id %>">
+        <button type="submit" class="btn-delete">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const deleteBtn = document.getElementById('deleteBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const deleteModal = document.getElementById('deleteModal');
+
+  deleteBtn.addEventListener('click', function() {
+    deleteModal.style.display = 'block';
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    deleteModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', function(event) {
+    if (event.target === deleteModal) {
+      deleteModal.style.display = 'none';
+    }
+  });
+</script>
+

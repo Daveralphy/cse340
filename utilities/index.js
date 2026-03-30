@@ -105,6 +105,30 @@ function buildVehicleDetailHTML(vehicle) {
   `
 }
 
+function buildVehicleDeleteHTML(vehicle) {
+  const price = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(vehicle.inv_price)
+
+  const mileage = new Intl.NumberFormat("en-US").format(vehicle.inv_miles)
+  const vehicleName = vehicle.inv_make + " " + vehicle.inv_model
+
+  return `
+    <div class="vehicle-detail">
+      <img src="${vehicle.inv_image}" alt="${vehicleName}">
+      <div class="vehicle-info">
+        <h2>${vehicleName}</h2>
+        <p><strong>Price:</strong> ${price}</p>
+        <p><strong>Mileage:</strong> ${mileage} miles</p>
+        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
+        <p>${vehicle.inv_description}</p>
+      </div>
+    </div>
+  `
+}
+
 /* ****************************
  * Check JWT Token
  * ***************************** */
@@ -144,6 +168,7 @@ module.exports = {
   buildClassificationList,
   buildClassificationGrid,
   buildVehicleDetailHTML,
+  buildVehicleDeleteHTML,
   checkJWTToken,
   checkLogin,
 }

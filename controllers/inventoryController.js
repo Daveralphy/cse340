@@ -302,6 +302,44 @@ async function getInventoryJSON(req, res, next) {
   }
 }
 
+/* ***************************
+ *  Build Delete View
+ * ************************** */
+async function buildDeleteView(req, res, next) {
+  const inv_id = parseInt(req.params.inv_id)
+  const itemData = await invModel.getVehicleById(inv_id)
+
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  const detailHTML = await utilities.buildVehicleDeleteHTML(itemData)
+
+  res.render("inventory/delete-confirm", {
+    title: "Delete " + itemName,
+    hideNav: true,
+    errors: null,
+    detail: detailHTML,
+    inv_id: itemData.inv_id,
+    inv_make: itemData.inv_make,
+    inv_model: itemData.inv_model
+  })
+}
+
+/* ***************************
+ *  Delete Inventory Item
+ * ************************** */
+async function deleteInventoryItem(req, res, next) {
+  const inv_id = parseInt(req.body.inv_id)
+
+  const deleteResult = await invModel.deleteInventoryItem(inv_id)
+
+  if (deleteResult.rowCount > 0) {
+    req.flash("notice", "The item was successfully deleted.")
+    res.redirect("/inv/")
+  } else {
+    req.flash("notice", "Sorry, the delete failed.")
+    res.redirect(`/inv/delete/${inv_id}`)
+  }
+}
+
 module.exports = {
   buildManagement,
   buildManagementView,
@@ -311,6 +349,8 @@ module.exports = {
   addVehicle,
   buildByClassificationId,
   buildVehicleDetail,
+  buildDeleteView,
+  deleteInventoryItem,
   triggerIntentionalError,
   getInventoryJSON,
 }

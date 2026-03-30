@@ -29,6 +29,10 @@ router.get("/type/:classificationId", utilities.handleErrors(inventoryController
 // View vehicle detail
 router.get("/detail/:inv_id", utilities.handleErrors(inventoryController.buildVehicleDetail))
 
+// Delete vehicle routes
+router.get("/delete/:inv_id", utilities.handleErrors(inventoryController.buildDeleteView))
+router.post("/delete", utilities.handleErrors(inventoryController.deleteInventoryItem))
+
 // Error test route
 router.get("/error", utilities.handleErrors(inventoryController.triggerIntentionalError))
 

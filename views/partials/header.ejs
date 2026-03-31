@@ -4,7 +4,7 @@
     <% if (typeof loggedin !== "undefined" && loggedin) { %>
       <span style="display: flex; align-items: center; gap: 20px;">
         <span>Welcome, <a href="/account/info" title="View account information" style="color: inherit; text-decoration: underline; cursor: pointer; border: none; background: none; padding: 0;"><%= accountData.account_firstname %></a>...</span>
-        <a href="/account/logout" title="Log out" style="padding: 8px 16px; border: 2px solid red; color: red; text-decoration: none; border-radius: 4px; cursor: pointer; background: none;">Logout</a>
+        <a href="/account/logout" title="Log out" style="padding: 8px 16px; border: 2px solid #cc0000; color: white; text-decoration: none; border-radius: 4px; cursor: pointer; background: #cc0000;">Logout</a>
       </span>
     <% } else { %>
       <a title="Click to log in" href="/account/login">My Account</a>

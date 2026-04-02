@@ -3,8 +3,8 @@ const router = new express.Router()
 const inventoryController = require("../controllers/inventoryController")
 const utilities = require("../utilities")
 
-// Inventory home page
-router.get("/", utilities.handleErrors(inventoryController.buildManagement))
+// Inventory home page - PROTECTED
+router.get("/", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.buildManagement))
 
 // Manage inventory page - PROTECTED
 router.get("/management", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.buildManagementView))

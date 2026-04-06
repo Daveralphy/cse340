@@ -1,6 +1,7 @@
 const express = require("express")
 const router = new express.Router()
 const accountController = require("../controllers/accountController")
+const inventoryController = require("../controllers/inventoryController")
 const regValidate = require("../utilities/account-validation")
 const utilities = require("../utilities")
 
@@ -36,6 +37,13 @@ router.get(
   "/info",
   utilities.checkLogin,
   utilities.handleErrors(accountController.buildInfo)
+)
+
+// Saved Vehicles/Favorites (protected route)
+router.get(
+  "/favorites",
+  utilities.checkLogin,
+  utilities.handleErrors(inventoryController.buildFavoritesView)
 )
 
 // Account Update (protected route)

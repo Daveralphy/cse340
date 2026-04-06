@@ -268,13 +268,23 @@ async function buildVehicleDetail(req, res, next) {
       throw notFoundError
     }
 
-    const detailHTML = await utilities.buildVehicleDetailHTML(data)
+    // Check if vehicle is favorited by current user
+    let isFavorited = false
+    if (res.locals.loggedin) {
+      const account_id = res.locals.accountData.account_id
+      isFavorited = await invModel.isFavorited(account_id, inv_id)
+    }
+
+    const detailHTML = await utilities.buildVehicleDetailHTML(data, isFavorited, res.locals.loggedin)
 
     res.render("inventory/detail", {
       title: data.inv_make + " " + data.inv_model,
       hideNav: true,
       detail: detailHTML,
       classificationId: data.classification_id,
+      classificationName: data.classification_name,
+      inv_id: inv_id,
+      isFavorited: isFavorited,
     })
   } catch (error) {
     next(error)
@@ -340,6 +350,246 @@ async function deleteInventoryItem(req, res, next) {
   }
 }
 
+/* ***************************
+ *  Save Vehicle to Favorites
+ * ************************** */
+async function saveVehicleToFavorites(req, res, next) {
+  try {
+    // Check if user is logged in
+    if (!res.locals.loggedin) {
+      return res.status(401).json({ success: false, message: "Please log in to save vehicles" })
+    }
+
+    const account_id = res.locals.accountData.account_id
+    const inv_id = parseInt(req.body.inv_id)
+
+    // Validate inv_id
+    if (isNaN(inv_id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID" })
+    }
+
+    // Check if vehicle exists
+    const vehicle = await invModel.getVehicleById(inv_id)
+    if (!vehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" })
+    }
+
+    // Add favorite
+    await invModel.addFavorite(account_id, inv_id)
+    
+    res.json({ success: true, message: "Vehicle added to favorites" })
+  } catch (error) {
+    // Check if it's a unique constraint violation (duplicate favorite)
+    if (error.code === "23505") {
+      return res.status(400).json({ success: false, message: "This vehicle is already in your favorites" })
+    }
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Remove Vehicle from Favorites
+ * ************************** */
+async function removeVehicleFromFavorites(req, res, next) {
+  try {
+    // Check if user is logged in
+    if (!res.locals.loggedin) {
+      return res.status(401).json({ success: false, message: "Please log in" })
+    }
+
+    const account_id = res.locals.accountData.account_id
+    const inv_id = parseInt(req.body.inv_id)
+
+    // Validate inv_id
+    if (isNaN(inv_id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID" })
+    }
+
+    // Remove favorite
+    await invModel.removeFavorite(account_id, inv_id)
+    
+    res.json({ success: true, message: "Vehicle removed from favorites" })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Build Favorites View
+ * ************************** */
+async function buildFavoritesView(req, res, next) {
+  try {
+    const account_id = res.locals.accountData.account_id
+    const favorites = await invModel.getFavoritesByAccount(account_id)
+
+    const grid = await utilities.buildClassificationGrid(favorites)
+
+    res.render("account/favorites", {
+      title: "My Saved Vehicles",
+      nav: await utilities.getNav(),
+      grid: grid || "<p>You haven't saved any vehicles yet.</p>",
+      errors: null,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Search/Filter Inventory
+ * ************************** */
+async function searchVehicles(req, res, next) {
+  try {
+    const { query, classification_id, price_min, price_max, mileage_min, mileage_max } = req.query
+
+    // Build filter object
+    const filters = {
+      keyword: query || "",
+      classification_id: classification_id ? parseInt(classification_id) : 0,
+      price_min: price_min ? parseFloat(price_min) : 0,
+      price_max: price_max ? parseFloat(price_max) : 0,
+      mileage_min: mileage_min ? parseInt(mileage_min) : 0,
+      mileage_max: mileage_max ? parseInt(mileage_max) : 0,
+    }
+
+    // Perform search
+    const results = await invModel.searchInventory(filters)
+
+    // Build grid HTML
+    let grid
+    if (results.length === 0) {
+      grid = '<div class="no-results"><p>No vehicles found matching your criteria. Please try different filters.</p></div>'
+    } else {
+      grid = await utilities.buildClassificationGrid(results)
+    }
+
+    // Get classification list for dropdown
+    const classificationSelect = await utilities.buildClassificationList()
+    const nav = await utilities.getNav('/search')
+
+    res.render("inventory/search-results", {
+      title: "Search Results",
+      hideNav: false,
+      nav,
+      grid,
+      classificationSelect,
+      filters,
+      resultCount: results.length,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Build by Classification Slug (URL friendly)
+ * ************************** */
+async function buildByClassificationSlug(req, res, next) {
+  try {
+    const slug = req.params.slug
+    const data = await invModel.getClassifications()
+    
+    const classification = data.find(c => 
+      utilities.slugify(c.classification_name) === slug
+    )
+    
+    if (!classification) {
+      const notFoundError = new Error("Classification not found")
+      notFoundError.status = 404
+      throw notFoundError
+    }
+    
+    const vehicles = await invModel.getInventoryByClassificationId(classification.classification_id)
+    
+    if (!vehicles || vehicles.length === 0) {
+      const notFoundError = new Error("No vehicles found for this classification")
+      notFoundError.status = 404
+      throw notFoundError
+    }
+    
+    const grid = await utilities.buildClassificationGrid(vehicles)
+    const className = classification.classification_name
+    const nav = await utilities.getNav('/' + slug)
+
+    res.render("inventory/classification", {
+      title: className + " vehicles",
+      hideNav: false,
+      nav,
+      grid,
+      classificationName: className,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+/* ***************************
+ *  Build Vehicle Detail by Slug (URL friendly)
+ * ************************** */
+async function buildVehicleDetailBySlug(req, res, next) {
+  try {
+    const categorySlug = req.params.categorySlug
+    const productSlug = req.params.productSlug
+    
+    // Extract inv_id from end of productSlug (e.g., "aerocar-123" -> 123)
+    const lastHyphenIndex = productSlug.lastIndexOf('-')
+    let inv_id = null
+    
+    if (lastHyphenIndex !== -1) {
+      const potentialId = productSlug.substring(lastHyphenIndex + 1)
+      if (/^\d+$/.test(potentialId)) {
+        inv_id = parseInt(potentialId)
+      }
+    }
+    
+    if (!inv_id) {
+      const notFoundError = new Error("Invalid vehicle URL")
+      notFoundError.status = 404
+      throw notFoundError
+    }
+    
+    const data = await invModel.getVehicleById(inv_id)
+    
+    if (!data) {
+      const notFoundError = new Error("Vehicle not found")
+      notFoundError.status = 404
+      throw notFoundError
+    }
+    
+    // Verify category slug matches
+    const expectedCategorySlug = utilities.slugify(data.classification_name)
+    if (expectedCategorySlug !== categorySlug) {
+      const notFoundError = new Error("Invalid category")
+      notFoundError.status = 404
+      throw notFoundError
+    }
+    
+    // Check if vehicle is favorited by current user
+    let isFavorited = false
+    if (res.locals.loggedin) {
+      const account_id = res.locals.accountData.account_id
+      isFavorited = await invModel.isFavorited(account_id, inv_id)
+    }
+    
+    const detailHTML = await utilities.buildVehicleDetailHTML(data, isFavorited, res.locals.loggedin)
+    const currentPath = '/' + categorySlug
+    const nav = await utilities.getNav(currentPath)
+    
+    res.render("inventory/detail", {
+      title: data.inv_make + " " + data.inv_model,
+      hideNav: false,
+      nav,
+      detail: detailHTML,
+      classificationName: data.classification_name,
+      classificationId: data.classification_id,
+      inv_id: inv_id,
+      isFavorited: isFavorited,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   buildManagement,
   buildManagementView,
@@ -348,9 +598,15 @@ module.exports = {
   buildAddVehicle,
   addVehicle,
   buildByClassificationId,
+  buildByClassificationSlug,
   buildVehicleDetail,
+  buildVehicleDetailBySlug,
   buildDeleteView,
   deleteInventoryItem,
   triggerIntentionalError,
   getInventoryJSON,
+  saveVehicleToFavorites,
+  removeVehicleFromFavorites,
+  buildFavoritesView,
+  searchVehicles,
 }

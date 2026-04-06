@@ -13,10 +13,14 @@
     <a href="/account/update" style="color: #007bff; text-decoration: none; font-weight: bold;">Update Account Information →</a>
   </p>
 
+  <p style="margin: 20px 0;">
+    <a href="/account/favorites" style="color: #28a745; text-decoration: none; font-weight: bold;">View Saved Vehicles →</a>
+  </p>
+
   <% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
     <h3 style="margin-top: 30px; margin-bottom: 10px;">Inventory Management</h3>
     <p>
-      <a href="/inv/" style="color: #28a745; text-decoration: none; font-weight: bold;">Manage Inventory →</a>
+      <a href="/inv/" style="color: #6c757d; text-decoration: none; font-weight: bold;">Manage Inventory →</a>
     </p>
   <% } %>
 

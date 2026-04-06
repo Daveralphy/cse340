@@ -7,14 +7,29 @@ function handleErrors(fn) {
   return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 }
 
-async function getNav() {
+// Convert text to URL-friendly slug
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+}
+
+async function getNav(currentPath = '') {
   const data = await invModel.getClassifications()
   let list = '<nav id="main-navigation"><ul>'
-  list += '<li><a href="/" title="Go to the home page">Home</a></li>'
+  
+  // Home link - active if on root path
+  const homeActive = currentPath === '/' ? ' class="active"' : ''
+  list += '<li><a href="/"' + homeActive + ' title="Go to the home page">Home</a></li>'
 
   data.forEach((row) => {
     if (row.classification_name.toLowerCase() !== "sport") {
-      list += '<li><a href="/inv/type/' + row.classification_id + '" title="View our ' + row.classification_name + ' vehicles">' + row.classification_name + "</a></li>"
+      const slug = slugify(row.classification_name)
+      const isActive = currentPath === '/' + slug ? ' class="active"' : ''
+      list += '<li><a href="/' + slug + '"' + isActive + ' title="View our ' + row.classification_name + ' vehicles">' + row.classification_name + "</a></li>"
     }
   })
 
@@ -41,6 +56,8 @@ function buildClassificationGrid(data) {
 
   data.forEach((vehicle) => {
     const name = vehicle.inv_make + " " + vehicle.inv_model
+    const productSlug = slugify(name) + "-" + vehicle.inv_id
+    const categorySlug = slugify(vehicle.classification_name)
     const price = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -48,7 +65,7 @@ function buildClassificationGrid(data) {
     }).format(vehicle.inv_price)
 
     grid += "<li>"
-    grid += '<a class="card-link" href="/inv/detail/' + vehicle.inv_id + '" title="View details for ' + name + '">'
+    grid += '<a class="card-link" href="/' + categorySlug + '/' + productSlug + '" title="View details for ' + name + '">'
     grid += '<img src="' + vehicle.inv_thumbnail + '" alt="' + name + ' thumbnail">'
     grid += '<div class="namePrice">'
     grid += "<hr>"
@@ -76,7 +93,7 @@ async function buildClassificationList() {
   return list
 }
 
-function buildVehicleDetailHTML(vehicle) {
+function buildVehicleDetailHTML(vehicle, isFavorited = false, isLoggedIn = false) {
   const price = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -85,19 +102,31 @@ function buildVehicleDetailHTML(vehicle) {
 
   const mileage = new Intl.NumberFormat("en-US").format(vehicle.inv_miles)
   const vehicleName = vehicle.inv_make + " " + vehicle.inv_model
+  const classificationSlug = slugify(vehicle.classification_name)
   const mailSubject = encodeURIComponent("Purchase Inquiry - " + vehicleName)
+
+  // Build favorite icon HTML if user is logged in
+  let favoriteIcon = ""
+  if (isLoggedIn) {
+    const iconClass = isFavorited ? "icon-heart-filled" : "icon-heart"
+    const iconTitle = isFavorited ? "Remove from Saved" : "Save Vehicle"
+    favoriteIcon = `<button type="button" class="favorite-icon-btn ${iconClass}" id="favoriteBtn" data-inv-id="${vehicle.inv_id}" data-is-favorited="${isFavorited}" title="${iconTitle}"></button>`
+  }
 
   return `
     <div class="vehicle-detail">
       <img src="${vehicle.inv_image}" alt="${vehicleName}">
       <div class="vehicle-info">
-        <h2>${vehicleName}</h2>
+        <div class="detail-header">
+          <h2>${vehicleName}</h2>
+          ${favoriteIcon}
+        </div>
         <p><strong>Price:</strong> ${price}</p>
         <p><strong>Mileage:</strong> ${mileage} miles</p>
         <p><strong>Color:</strong> ${vehicle.inv_color}</p>
         <p>${vehicle.inv_description}</p>
         <div class="detail-actions">
-          <a class="btn-secondary" href="/inv/type/${vehicle.classification_id}">Back to Vehicle List</a>
+          <a class="btn-secondary" href="/${classificationSlug}">Back to Vehicle List</a>
           <a class="btn-primary" href="mailto:sales@csemotors.example?subject=${mailSubject}">Purchase Inquiry</a>
         </div>
       </div>
@@ -182,6 +211,7 @@ const checkInventoryAuth = (req, res, next) => {
 
 module.exports = {
   handleErrors,
+  slugify,
   getNav,
   getClassificationDropdown,
   buildClassificationList,

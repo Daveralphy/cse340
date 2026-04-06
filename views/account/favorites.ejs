@@ -1,0 +1,14 @@
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span>/</span> <a href="/account/">Account</a> <span>/</span> <span>Saved Vehicles</span>
+</nav>
+
+<div class="favorites-container">
+  <h1><%= title %></h1>
+  
+  <div class="favorites-header">
+    <p>These are the vehicles you've saved for later viewing.</p>
+    <a href="/custom" class="btn-secondary">Browse More Vehicles</a>
+  </div>
+
+  <%- grid %>
+</div>

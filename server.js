@@ -13,6 +13,7 @@ const flash = require("connect-flash")
 const app = express()
 const static = require("./routes/static")
 const invRoute = require("./routes/inventoryRoute")
+const vehiclesRoute = require("./routes/vehiclesRoute")
 const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities")
 const cookieParser = require("cookie-parser")
@@ -61,16 +62,15 @@ app.get("/", async function (req, res, next) {
   try {
     res.render("index", {
       title: "Home",
-      nav: await utilities.getNav(),
+      nav: await utilities.getNav('/'),
     })
   } catch (error) {
     next(error)
   }
 })
 
-app.get("/vehicles/detail/:inv_id", (req, res) => {
-  res.redirect(`/inv/detail/${req.params.inv_id}`)
-})
+// Vehicles routes (public browsing - must come after home route)
+app.use(vehiclesRoute)
 
 app.use(async (req, res, next) => {
   try {

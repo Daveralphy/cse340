@@ -24,7 +24,7 @@ async function getInventoryByClassificationId(classification_id) {
 
 async function getVehicleById(inv_id) {
   try {
-    const sql = "SELECT * FROM inventory WHERE inv_id = $1"
+    const sql = "SELECT i.*, c.classification_name FROM inventory i JOIN classification c ON i.classification_id = c.classification_id WHERE i.inv_id = $1"
     const data = await pool.query(sql, [inv_id])
     return data.rows[0]
   } catch (error) {
@@ -68,6 +68,121 @@ async function deleteInventoryItem(inv_id) {
   }
 }
 
+/* ***************************
+ *  Add Favorite
+ * ************************** */
+async function addFavorite(account_id, inv_id) {
+  try {
+    const sql = "INSERT INTO favorites (account_id, inv_id) VALUES ($1, $2) RETURNING *"
+    const data = await pool.query(sql, [account_id, inv_id])
+    return data.rows[0]
+  } catch (error) {
+    console.error("addFavorite error " + error)
+    throw error
+  }
+}
+
+/* ***************************
+ *  Remove Favorite
+ * ************************** */
+async function removeFavorite(account_id, inv_id) {
+  try {
+    const sql = "DELETE FROM favorites WHERE account_id = $1 AND inv_id = $2"
+    const data = await pool.query(sql, [account_id, inv_id])
+    return data
+  } catch (error) {
+    console.error("removeFavorite error " + error)
+    throw error
+  }
+}
+
+/* ***************************
+ *  Get Favorites by Account
+ * ************************** */
+async function getFavoritesByAccount(account_id) {
+  try {
+    const sql = "SELECT f.favorite_id, i.*, c.classification_name FROM favorites f JOIN inventory i ON f.inv_id = i.inv_id JOIN classification c ON i.classification_id = c.classification_id WHERE f.account_id = $1 ORDER BY i.inv_make, i.inv_model"
+    const data = await pool.query(sql, [account_id])
+    return data.rows
+  } catch (error) {
+    console.error("getFavoritesByAccount error " + error)
+    throw error
+  }
+}
+
+/* ***************************
+ *  Check if Vehicle is Favorited
+ * ************************** */
+async function isFavorited(account_id, inv_id) {
+  try {
+    const sql = "SELECT favorite_id FROM favorites WHERE account_id = $1 AND inv_id = $2"
+    const data = await pool.query(sql, [account_id, inv_id])
+    return data.rows.length > 0
+  } catch (error) {
+    console.error("isFavorited error " + error)
+    throw error
+  }
+}
+
+/* ***************************
+ *  Search Inventory
+ * ************************** */
+async function searchInventory(filters) {
+  try {
+    let sql = "SELECT i.*, c.classification_name FROM inventory i JOIN classification c ON i.classification_id = c.classification_id WHERE 1=1"
+    const params = []
+    let paramIndex = 1
+
+    // Keyword search (make/model)
+    if (filters.keyword && filters.keyword.trim()) {
+      sql += ` AND (LOWER(i.inv_make) LIKE LOWER($${paramIndex}) OR LOWER(i.inv_model) LIKE LOWER($${paramIndex}))`
+      params.push(`%${filters.keyword.trim()}%`)
+      paramIndex++
+    }
+
+    // Classification filter
+    if (filters.classification_id && filters.classification_id > 0) {
+      sql += ` AND i.classification_id = $${paramIndex}`
+      params.push(filters.classification_id)
+      paramIndex++
+    }
+
+    // Price range
+    if (filters.price_min && !isNaN(filters.price_min) && filters.price_min > 0) {
+      sql += ` AND i.inv_price >= $${paramIndex}`
+      params.push(filters.price_min)
+      paramIndex++
+    }
+
+    if (filters.price_max && !isNaN(filters.price_max) && filters.price_max > 0) {
+      sql += ` AND i.inv_price <= $${paramIndex}`
+      params.push(filters.price_max)
+      paramIndex++
+    }
+
+    // Mileage range
+    if (filters.mileage_min && !isNaN(filters.mileage_min) && filters.mileage_min >= 0) {
+      sql += ` AND i.inv_miles >= $${paramIndex}`
+      params.push(filters.mileage_min)
+      paramIndex++
+    }
+
+    if (filters.mileage_max && !isNaN(filters.mileage_max) && filters.mileage_max >= 0) {
+      sql += ` AND i.inv_miles <= $${paramIndex}`
+      params.push(filters.mileage_max)
+      paramIndex++
+    }
+
+    sql += " ORDER BY i.inv_make, i.inv_model"
+
+    const data = await pool.query(sql, params)
+    return data.rows
+  } catch (error) {
+    console.error("searchInventory error " + error)
+    throw error
+  }
+}
+
 module.exports = {
   getClassifications,
   getInventoryByClassificationId,
@@ -75,4 +190,9 @@ module.exports = {
   addClassification,
   addVehicle,
   deleteInventoryItem,
+  addFavorite,
+  removeFavorite,
+  getFavoritesByAccount,
+  isFavorited,
+  searchInventory,
 }

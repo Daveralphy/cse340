@@ -23,12 +23,6 @@ router.post("/add-classification", utilities.checkInventoryAuth, utilities.handl
 router.get("/add-vehicle", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.buildAddVehicle))
 router.post("/add-vehicle", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.addVehicle))
 
-// View by classification - PUBLIC
-router.get("/type/:classificationId", utilities.handleErrors(inventoryController.buildByClassificationId))
-
-// View vehicle detail - PUBLIC
-router.get("/detail/:inv_id", utilities.handleErrors(inventoryController.buildVehicleDetail))
-
 // Delete vehicle routes - PROTECTED
 router.get("/delete/:inv_id", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.buildDeleteView))
 router.post("/delete", utilities.checkInventoryAuth, utilities.handleErrors(inventoryController.deleteInventoryItem))

@@ -1,6 +1,58 @@
-<nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="/">Home</a> <span>/</span> <span>Inventory</span>
-</nav>
+<div class="inventory-page">
+  <!-- Quick Search/Filter Form -->
+  <div class="search-filter-form">
+    <form method="GET" action="/search" class="filter-form">
+      <div class="filter-inputs">
+        <div class="search-input-group">
+          <label for="query-search">Search by Make/Model:</label>
+          <input 
+            type="text" 
+            id="query-search"
+            name="query" 
+            placeholder="Search by Make/Model..." 
+          >
+        </div>
 
-<h1><%= title %></h1>
-<%- grid %>
+        <div class="form-group">
+          <label for="price_min">Min Price:</label>
+          <input 
+            type="number" 
+            id="price_min"
+            name="price_min" 
+            placeholder="Min Price" 
+            min="0" 
+            step="1000"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="price_max">Max Price:</label>
+          <input 
+            type="number" 
+            id="price_max"
+            name="price_max" 
+            placeholder="Max Price" 
+            min="0" 
+            step="1000"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="mileage_max">Max Mileage:</label>
+          <input 
+            type="number" 
+            id="mileage_max"
+            name="mileage_max" 
+            placeholder="Max Mileage" 
+            min="0" 
+            step="1000"
+          >
+        </div>
+
+        <button type="submit" class="btn-filter">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <%- grid %>
+</div>

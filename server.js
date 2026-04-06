@@ -62,7 +62,7 @@ app.get("/", async function (req, res, next) {
   try {
     res.render("index", {
       title: "Home",
-      nav: await utilities.getNav('/'),
+      nav: await utilities.getNav('/', res.locals.loggedin),
     })
   } catch (error) {
     next(error)

@@ -419,15 +419,27 @@ async function removeVehicleFromFavorites(req, res, next) {
  * ************************** */
 async function buildFavoritesView(req, res, next) {
   try {
+    // Check if user is logged in
+    if (!res.locals.loggedin) {
+      const notFoundError = new Error("You must be logged in to view saved vehicles")
+      notFoundError.status = 401
+      throw notFoundError
+    }
+
     const account_id = res.locals.accountData.account_id
     const favorites = await invModel.getFavoritesByAccount(account_id)
 
-    const grid = await utilities.buildClassificationGrid(favorites)
+    const grid = favorites && favorites.length > 0 
+      ? await utilities.buildClassificationGrid(favorites) 
+      : '<div class="no-favorites"><p>You have not saved any vehicles yet.</p></div>'
 
-    res.render("account/favorites", {
+    const nav = await utilities.getNav('/account/saved', res.locals.loggedin)
+
+    res.render("inventory/saved-vehicles", {
       title: "My Saved Vehicles",
-      nav: await utilities.getNav(),
-      grid: grid || "<p>You haven't saved any vehicles yet.</p>",
+      hideNav: false,
+      nav,
+      grid,
       errors: null,
     })
   } catch (error) {
@@ -465,11 +477,11 @@ async function searchVehicles(req, res, next) {
 
     // Get classification list for dropdown
     const classificationSelect = await utilities.buildClassificationList()
-    const nav = await utilities.getNav('/search')
+    const nav = await utilities.getNav('/search', res.locals.loggedin)
 
     res.render("inventory/search-results", {
       title: "Search Results",
-      hideNav: false,
+      hideNav: true,
       nav,
       grid,
       classificationSelect,
@@ -509,7 +521,7 @@ async function buildByClassificationSlug(req, res, next) {
     
     const grid = await utilities.buildClassificationGrid(vehicles)
     const className = classification.classification_name
-    const nav = await utilities.getNav('/' + slug)
+    const nav = await utilities.getNav('/' + slug, res.locals.loggedin)
 
     res.render("inventory/classification", {
       title: className + " vehicles",
@@ -573,7 +585,7 @@ async function buildVehicleDetailBySlug(req, res, next) {
     
     const detailHTML = await utilities.buildVehicleDetailHTML(data, isFavorited, res.locals.loggedin)
     const currentPath = '/' + categorySlug
-    const nav = await utilities.getNav(currentPath)
+    const nav = await utilities.getNav(currentPath, res.locals.loggedin)
     
     res.render("inventory/detail", {
       title: data.inv_make + " " + data.inv_model,

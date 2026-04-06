@@ -1,23 +1,28 @@
-<nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="/">Home</a> <span>/</span> <span>Search Results</span>
+<nav class="breadcrumbs breadcrumbs-with-action" aria-label="Breadcrumb">
+  <div class="breadcrumb-text">
+    <a href="/">Home</a> <span>/</span> <span>Search Results</span>
+  </div>
+  <% if (typeof loggedin !== "undefined" && loggedin) { %>
+    <a href="/account/saved" class="btn-saved-nav" title="View your saved vehicles">Saved Vehicles</a>
+  <% } %>
 </nav>
 
-<div class="search-container">
-  <!-- Search/Filter Form -->
+<div class="inventory-page">
+  <!-- Search/Filter Form - Always Visible -->
   <div class="search-filter-form">
     <form method="GET" action="/search" class="filter-form">
-      <div class="form-group search-input-group">
-        <label for="query">Search By Make/Model:</label>
-        <input 
-          type="text" 
-          id="query" 
-          name="query" 
-          placeholder="e.g., Jeep, Honda, etc." 
-          value="<%= filters.keyword || '' %>"
-        >
-      </div>
+      <div class="filter-inputs">
+        <div class="search-input-group">
+          <label for="query">Search By Make/Model:</label>
+          <input 
+            type="text" 
+            id="query"
+            name="query" 
+            placeholder="e.g., Jeep, Honda, etc." 
+            value="<%= filters.keyword || '' %>"
+          >
+        </div>
 
-      <div class="form-row">
         <div class="form-group">
           <label for="classification_id">Classification:</label>
           <%- classificationSelect %>
@@ -27,7 +32,7 @@
           <label for="price_min">Min Price:</label>
           <input 
             type="number" 
-            id="price_min" 
+            id="price_min"
             name="price_min" 
             placeholder="Min" 
             min="0" 
@@ -40,7 +45,7 @@
           <label for="price_max">Max Price:</label>
           <input 
             type="number" 
-            id="price_max" 
+            id="price_max"
             name="price_max" 
             placeholder="Max" 
             min="0" 
@@ -48,14 +53,12 @@
             value="<%= filters.price_max > 0 ? filters.price_max : '' %>"
           >
         </div>
-      </div>
 
-      <div class="form-row">
         <div class="form-group">
           <label for="mileage_min">Min Mileage:</label>
           <input 
             type="number" 
-            id="mileage_min" 
+            id="mileage_min"
             name="mileage_min" 
             placeholder="Min" 
             min="0" 
@@ -68,7 +71,7 @@
           <label for="mileage_max">Max Mileage:</label>
           <input 
             type="number" 
-            id="mileage_max" 
+            id="mileage_max"
             name="mileage_max" 
             placeholder="Max" 
             min="0" 
@@ -76,20 +79,14 @@
             value="<%= filters.mileage_max > 0 ? filters.mileage_max : '' %>"
           >
         </div>
-      </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">Filter Results</button>
-        <a href="/search" class="btn-secondary">Clear Filters</a>
+        <button type="submit" class="btn-filter">Filter</button>
       </div>
     </form>
-  </div>
-
-  <!-- Results Info -->
-  <div class="results-info">
-    <p><strong>Found <%= resultCount %> vehicle<%= resultCount !== 1 ? 's' : '' %></strong></p>
   </div>
 
   <!-- Vehicle Grid -->
   <%- grid %>
 </div>
+
+<script src="/js/favorites.js"></script>

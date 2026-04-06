@@ -71,3 +71,36 @@ function showNotification(message, type = 'info') {
     notification.remove();
   }, 3000);
 }
+
+/* ==========================================
+   Filter Modal Handler
+   ========================================== */
+const filterToggle = document.getElementById('filterToggle');
+const filterModal = document.getElementById('filterModal');
+const filterClose = document.getElementById('filterClose');
+
+if (filterToggle && filterModal && filterClose) {
+  // Open modal when filter button is clicked
+  filterToggle.addEventListener('click', function() {
+    filterModal.classList.add('active');
+  });
+  
+  // Close modal when close button is clicked
+  filterClose.addEventListener('click', function() {
+    filterModal.classList.remove('active');
+  });
+  
+  // Close modal when clicking outside the modal content
+  filterModal.addEventListener('click', function(event) {
+    if (event.target === filterModal) {
+      filterModal.classList.remove('active');
+    }
+  });
+  
+  // Close modal when pressing Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && filterModal.classList.contains('active')) {
+      filterModal.classList.remove('active');
+    }
+  });
+}

@@ -17,7 +17,7 @@ function slugify(text) {
     .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
 }
 
-async function getNav(currentPath = '') {
+async function getNav(currentPath = '', isLoggedIn = false) {
   const data = await invModel.getClassifications()
   let list = '<nav id="main-navigation"><ul>'
   
@@ -32,6 +32,8 @@ async function getNav(currentPath = '') {
       list += '<li><a href="/' + slug + '"' + isActive + ' title="View our ' + row.classification_name + ' vehicles">' + row.classification_name + "</a></li>"
     }
   })
+
+  // Saved vehicles button removed - now shown in page header
 
   list += "</ul></nav>"
   return list

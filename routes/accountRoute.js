@@ -41,7 +41,7 @@ router.get(
 
 // Saved Vehicles/Favorites (protected route)
 router.get(
-  "/favorites",
+  "/saved",
   utilities.checkLogin,
   utilities.handleErrors(inventoryController.buildFavoritesView)
 )

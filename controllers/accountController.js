@@ -9,7 +9,7 @@ require("dotenv").config()
  * ***************************** */
 async function buildLogin(req, res, next) {
   try {
-    let nav = await utilities.getNav()
+    let nav = await utilities.getNav('', res.locals.loggedin)
     res.render("account/login", {
       title: "Login",
       nav,
@@ -26,7 +26,7 @@ async function buildLogin(req, res, next) {
  * ***************************** */
 async function accountLogin(req, res, next) {
   try {
-    let nav = await utilities.getNav()
+    let nav = await utilities.getNav('', res.locals.loggedin)
     const { account_email, account_password } = req.body
     console.log("Login attempt with:", account_email)
     
@@ -78,7 +78,7 @@ async function accountLogin(req, res, next) {
     }
   } catch (error) {
     console.error("Login error:", error)
-    let nav = await utilities.getNav()
+    let nav = await utilities.getNav('', res.locals.loggedin)
     res.status(500).render("account/login", {
       title: "Login",
       nav,
@@ -93,7 +93,7 @@ async function accountLogin(req, res, next) {
  * Build Account Management
  * ***************************** */
 async function buildManagement(req, res) {
-  let nav = await utilities.getNav()
+  let nav = await utilities.getNav('', res.locals.loggedin)
   res.render("account/management", {
     title: "Account Management",
     nav,
@@ -106,7 +106,7 @@ async function buildManagement(req, res) {
  * Build Account Info Page (Read-Only)
  * ***************************** */
 async function buildInfo(req, res) {
-  let nav = await utilities.getNav()
+  let nav = await utilities.getNav('', res.locals.loggedin)
   res.render("account/info", {
     title: "Account Information",
     nav,
@@ -120,7 +120,7 @@ async function buildInfo(req, res) {
  * ***************************** */
 async function buildRegister(req, res, next) {
   try {
-    let nav = await utilities.getNav()
+    let nav = await utilities.getNav('', res.locals.loggedin)
     res.render("account/register", {
       title: "Create Account",
       nav,
@@ -137,7 +137,7 @@ async function buildRegister(req, res, next) {
  * ***************************** */
 async function accountRegister(req, res, next) {
   try {
-    const nav = await utilities.getNav()
+    const nav = await utilities.getNav('', res.locals.loggedin)
     const { account_firstname, account_lastname, account_email, account_username, account_password } = req.body
 
     // Hash the password
@@ -191,7 +191,7 @@ async function accountRegister(req, res, next) {
     }
     res.status(500).render("account/register", {
       title: "Create Account",
-      nav: await utilities.getNav(),
+      nav: await utilities.getNav('', res.locals.loggedin),
       hideNav: true,
       errors: [{ msg: errorMsg }],
       account_firstname: req.body.account_firstname || "",
@@ -207,7 +207,7 @@ async function accountRegister(req, res, next) {
  * ***************************** */
 async function buildUpdate(req, res, next) {
   try {
-    let nav = await utilities.getNav()
+    let nav = await utilities.getNav('', res.locals.loggedin)
     res.render("account/update", {
       title: "Update Account",
       nav,
@@ -225,7 +225,7 @@ async function buildUpdate(req, res, next) {
  * ***************************** */
 async function updateAccount(req, res, next) {
   try {
-    const nav = await utilities.getNav()
+    const nav = await utilities.getNav('', res.locals.loggedin)
     const { account_id, account_firstname, account_lastname, account_email } = req.body
 
     const result = await accountModel.updateAccount(account_id, {
@@ -273,7 +273,7 @@ async function updateAccount(req, res, next) {
  * ***************************** */
 async function updatePassword(req, res, next) {
   try {
-    const nav = await utilities.getNav()
+    const nav = await utilities.getNav('', res.locals.loggedin)
     const { account_id, account_password } = req.body
 
     // Hash the password
